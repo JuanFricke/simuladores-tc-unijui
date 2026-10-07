@@ -37,6 +37,7 @@ class MotorTuring {
     this.status = "executando"; // executando | aceita | rejeita | limite
     this.motivo = "Em execucao.";
     this.ultimaRegra = null;
+    this.ultimaEscrita = null; // posicao gravada no ultimo passo (p/ animar)
     this.historico = [this.foto()];
     this._conferirParadaInicial();
   }
@@ -79,6 +80,7 @@ class MotorTuring {
       return false;
     }
     // Aplica regra.
+    this.ultimaEscrita = this.cabeca;
     if (regra.escreve === this.branco) this.fita.delete(this.cabeca);
     else this.fita.set(this.cabeca, regra.escreve);
     this.ultimaRegra = regra;

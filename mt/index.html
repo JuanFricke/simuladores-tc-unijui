@@ -17,7 +17,7 @@
 <h2>1 · Palavra de entrada e controle (R1, R5, R6, R7)</h2>
 <div class="linha">
 <label class="rotulo" for="entrada">Palavra de entrada:</label>
-<input type="text" id="entrada" value="aabb" size="24" placeholder="ex.: 101, aabb">
+<input type="text" id="entrada" value="101" size="24" placeholder="ex.: 101, 001100">
 <label class="rotulo" for="limite">Limite:</label>
 <input type="number" id="limite" value="500" min="1" max="10000" style="width:90px">
 <button id="btnAplicar">Aplicar entrada e reiniciar</button>
@@ -25,10 +25,13 @@
 <div class="linha" style="margin-top:10px">
 <button id="btnPasso">Executar próximo passo (R5)</button>
 <button id="btnAuto">Iniciar automático (R6)</button>
+<button id="btnFim" class="secundario">Rodar até o fim</button>
 <button id="btnReiniciar" class="secundario">Reiniciar (R7)</button>
 <label class="rotulo" for="vel">Velocidade:</label>
-<select id="vel"><option value="800">lenta</option><option value="350" selected>média</option><option value="90">rápida</option></select>
+<input type="range" id="vel" min="60" max="900" step="10" value="350" style="width:130px" title="Intervalo entre passos (ms)">
+<span id="velRotulo" class="dica">350ms</span>
 </div>
+<p class="dica">Atalhos: <kbd>Espaço</kbd> passo · <kbd>A</kbd> automático · <kbd>F</kbd> até o fim · <kbd>R</kbd> reiniciar · clique num item do histórico para voltar no tempo.</p>
 </section>
 
 <section class="cartao">
@@ -37,6 +40,7 @@
 <span class="cracha">Estado atual: <b id="cEstado">–</b></span>
 <span class="cracha">Passo nº: <b id="cPasso">0</b></span>
 <span class="cracha">Cabeçote: <b id="cCabeca">0</b></span>
+<span class="cracha"><progress id="prog" value="0" max="500"></progress></span>
 </div>
 <div id="faixa" class="faixa exec">Carregue uma máquina e uma entrada para começar.</div>
 <p id="motivo" style="font-size:.88rem;color:#555"></p>
@@ -54,13 +58,21 @@
 </section>
 
 <section class="cartao">
-<h2>5 · Histórico de configurações (R8)</h2>
+<h2>5 · Histórico de configurações (R8) — clique para voltar no tempo</h2>
 <ol id="hist" class="historico"></ol>
 <div class="linha"><button id="btnExport" class="secundario">Exportar definição JSON</button></div>
 </section>
 
 <section class="cartao">
-<h2>6 · Definição da máquina (JSON próprio)</h2>
+<h2>6 · Tabela de transições (δ completo — a linha ativa pisca)</h2>
+<div class="envoltorio-tabela"><table class="regras" id="tabela">
+<thead><tr><th>#</th><th>Estado</th><th>Lê</th><th>→ Vai para</th><th>Escreve</th><th>Move</th></tr></thead>
+<tbody></tbody>
+</table></div>
+</section>
+
+<section class="cartao">
+<h2>7 · Definição da máquina (JSON próprio)</h2>
 <div class="linha">
 <button data-ex="paridade">Exemplo A: paridade de '1's</button>
 <button data-ex="anbn" class="secundario">Exemplo B: aⁿbⁿ</button>
@@ -102,7 +114,7 @@ function instalar() {
   def = lerDef() || def; if (!def) return;
   motor = new MotorTuring(def);
   motor.reiniciar($("entrada").value, parseInt($("limite").value || "500", 10));
-  auto.parar(); botaoAuto(); desenhar();
+  auto.parar(); botaoAuto(); montarTabela(); desenhar();
   const av = motor.avisos();
   if (av.length) $("avisoJson").textContent = "Atenção: " + av.join(" | ");
 }
@@ -117,18 +129,30 @@ function desenhar() {
   $("cEstado").textContent = motor.estado;
   $("cPasso").textContent = motor.passos;
   $("cCabeca").textContent = motor.cabeca;
-  // fita
-  const caixa = $("fita"); caixa.innerHTML = "";
+  const prog = $("prog"); prog.max = motor.limite; prog.value = motor.passos;
+  // fita (reconstrói células; a seta desliza via CSS transition)
+  const caixa = $("fita"); caixa.innerHTML = '<div id="seta">▼</div>';
   motor.janela(7).forEach((c) => {
     const d = document.createElement("div");
     d.className = "celula" + (c.atual ? " cabecote" : "");
-    d.innerHTML = (c.atual ? '<div class="seta-cabecote">▼</div>' : "") +
-      '<div class="simbolo"></div><div class="indice">pos ' + c.pos + "</div>";
+    d.dataset.pos = c.pos;
+    d.innerHTML = '<div class="simbolo"></div><div class="indice">pos ' + c.pos + "</div>";
     d.querySelector(".simbolo").textContent = c.simbolo;
     caixa.appendChild(d);
   });
+  const alvo = [...caixa.children].find((c) => c.dataset.pos == motor.cabeca);
+  if (alvo) $("seta").style.left = (alvo.offsetLeft + alvo.offsetWidth / 2) + "px";
+  if (motor.ultimaEscrita !== null) {
+    const g = [...caixa.children].find((c) => c.dataset.pos == motor.ultimaEscrita);
+    if (g) g.classList.add("gravou");
+  }
   $("regra").textContent = motor.textoRegra(motor.ultimaRegra);
-  renderHistorico("hist", motor.historico);
+  // destaca a linha ativa na tabela
+  const idx = def.transicoes.indexOf(motor.ultimaRegra);
+  document.querySelectorAll("#tabela tbody tr").forEach((tr, i) => {
+    tr.classList.toggle("ativa", i === idx);
+  });
+  renderHistorico("hist", motor.historico, irParaPasso);
   const mapa = { executando: ["Em execução — use o próximo passo ou o modo automático.", "exec"],
     aceita: ["✅ ACEITA — " + motor.motivo, "aceita"],
     rejeita: ["❌ REJEITA — " + motor.motivo, "rejeita"],
@@ -137,8 +161,38 @@ function desenhar() {
   $("motivo").textContent = `passos=${motor.passos} · limite=${motor.limite}`;
 }
 function botaoAuto() { $("btnAuto").textContent = auto.rodando() ? "Pausar automático" : "Iniciar automático (R6)"; }
+function irParaPasso(n) {
+  auto.parar(); botaoAuto();
+  motor.reiniciar($("entrada").value, parseInt($("limite").value || "500", 10));
+  for (let i = 0; i < n && motor.status === "executando"; i++) motor.passo();
+  desenhar();
+}
+function montarTabela() {
+  const tb = document.querySelector("#tabela tbody");
+  tb.innerHTML = "";
+  def.transicoes.forEach((t, i) => {
+    const tr = document.createElement("tr");
+    [i, t.de, t.le, t.para, t.escreve, t.move].forEach((v) => {
+      const td = document.createElement("td"); td.textContent = v; tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+}
 $("btnPasso").onclick = () => { auto.parar(); botaoAuto(); motor.passo(); desenhar(); };
 $("btnAuto").onclick = () => { if (auto.rodando()) auto.parar(); else auto.iniciar(parseInt($("vel").value, 10)); botaoAuto(); };
+$("btnFim").onclick = () => { auto.parar(); botaoAuto(); motor.executarAteFim(); desenhar(); };
+$("vel").oninput = (e) => {
+  $("velRotulo").textContent = e.target.value + "ms";
+  if (auto.rodando()) { auto.parar(); auto.iniciar(parseInt(e.target.value, 10)); }
+};
+document.addEventListener("keydown", (e) => {
+  const tag = (e.target.tagName || "").toUpperCase();
+  if (["INPUT", "TEXTAREA", "SELECT"].includes(tag) || !motor) return;
+  if (e.code === "Space") { e.preventDefault(); $("btnPasso").click(); }
+  else if (e.key === "a" || e.key === "A") $("btnAuto").click();
+  else if (e.key === "f" || e.key === "F") $("btnFim").click();
+  else if (e.key === "r" || e.key === "R") $("btnReiniciar").click();
+});
 $("btnReiniciar").onclick = instalar;
 $("btnAplicar").onclick = instalar;
 $("btnValidar").onclick = instalar;

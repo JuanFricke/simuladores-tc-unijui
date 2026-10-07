@@ -14,13 +14,15 @@ function mostrarFaixa(id, texto, classe) {
   el.className = "faixa " + classe;
 }
 
-function renderHistorico(olId, itens) {
+function renderHistorico(olId, itens, onClique) {
   const ol = document.getElementById(olId);
   if (!ol) return;
   ol.innerHTML = "";
-  itens.forEach((t) => {
+  itens.forEach((t, i) => {
     const li = document.createElement("li");
     li.textContent = t;
+    if (i === itens.length - 1) li.className = "atual";
+    if (onClique) li.onclick = () => onClique(i);
     ol.appendChild(li);
   });
   ol.scrollTop = ol.scrollHeight;

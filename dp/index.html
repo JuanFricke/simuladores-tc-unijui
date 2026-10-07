@@ -17,7 +17,7 @@
 <h2>1 · Palavra de entrada e controle (R1, R5, R6, R7)</h2>
 <div class="linha">
 <label class="rotulo" for="entrada">Palavra de entrada:</label>
-<input type="text" id="entrada" value="aabbcc" size="24" placeholder="ex.: aabb, aabbcc">
+<input type="text" id="entrada" value="aabb" size="24" placeholder="ex.: aabb, aabbcc">
 <label class="rotulo" for="limite">Limite:</label>
 <input type="number" id="limite" value="500" min="1" max="10000" style="width:90px">
 <button id="btnAplicar">Aplicar entrada e reiniciar</button>
@@ -25,10 +25,13 @@
 <div class="linha" style="margin-top:10px">
 <button id="btnPasso">Executar próximo passo (R5)</button>
 <button id="btnAuto">Iniciar automático (R6)</button>
+<button id="btnFim" class="secundario">Rodar até o fim</button>
 <button id="btnReiniciar" class="secundario">Reiniciar (R7)</button>
 <label class="rotulo" for="vel">Velocidade:</label>
-<select id="vel"><option value="800">lenta</option><option value="350" selected>média</option><option value="90">rápida</option></select>
+<input type="range" id="vel" min="60" max="900" step="10" value="350" style="width:130px" title="Intervalo entre passos (ms)">
+<span id="velRotulo" class="dica">350ms</span>
 </div>
+<p class="dica">Atalhos: <kbd>Espaço</kbd> passo · <kbd>A</kbd> automático · <kbd>F</kbd> até o fim · <kbd>R</kbd> reiniciar · clique num item do histórico para voltar no tempo.</p>
 </section>
 
 <section class="cartao">
@@ -37,6 +40,7 @@
 <span class="cracha">Estado atual: <b id="cEstado">–</b></span>
 <span class="cracha">Passo nº: <b id="cPasso">0</b></span>
 <span class="cracha">Pos. leitura: <b id="cPos">0</b></span>
+<span class="cracha"><progress id="prog" value="0" max="500"></progress></span>
 </div>
 <div id="faixa" class="faixa exec">Carregue uma máquina e uma entrada para começar.</div>
 <p id="motivo" style="font-size:.88rem;color:#555"></p>
@@ -59,13 +63,21 @@
 </section>
 
 <section class="cartao">
-<h2>5 · Histórico de configurações (R8)</h2>
+<h2>5 · Histórico de configurações (R8) — clique para voltar no tempo</h2>
 <ol id="hist" class="historico"></ol>
 <div class="linha"><button id="btnExport" class="secundario">Exportar definição JSON</button></div>
 </section>
 
 <section class="cartao">
-<h2>6 · Definição da máquina (JSON próprio)</h2>
+<h2>6 · Tabela de transições (δ completo — a linha ativa pisca)</h2>
+<div class="envoltorio-tabela"><table class="regras" id="tabela">
+<thead><tr><th>#</th><th>De</th><th>Lê</th><th>Topo1</th><th>Topo2</th><th>→ Para</th><th>Pilha 1</th><th>Pilha 2</th><th>Fim?</th></tr></thead>
+<tbody></tbody>
+</table></div>
+</section>
+
+<section class="cartao">
+<h2>7 · Definição da máquina (JSON próprio)</h2>
 <div class="linha">
 <button data-ex="anbn">Exemplo A: aⁿbⁿ (usa P1)</button>
 <button data-ex="anbncn" class="secundario">Exemplo B: aⁿbⁿcⁿ (usa P1 e P2)</button>
@@ -99,12 +111,13 @@ function instalar() {
   else { $("avisoJson").textContent = "JSON inválido: " + v.erro; if (!def) return; }
   motor = new MotorDuasPilhas(def);
   motor.reiniciar($("entrada").value, parseInt($("limite").value || "500", 10));
-  auto.parar(); botaoAuto(); desenhar();
+  auto.parar(); botaoAuto(); montarTabela(); desenhar();
 }
 function desenhar() {
   $("cEstado").textContent = motor.estado;
   $("cPasso").textContent = motor.passos;
   $("cPos").textContent = motor.pos + "/" + motor.entrada.length;
+  const prog = $("prog"); prog.max = motor.limite; prog.value = motor.passos;
   // entrada
   const fe = $("fitaEntrada"); fe.innerHTML = "";
   if (motor.entrada.length === 0) { const s = document.createElement("span"); s.textContent = "(entrada vazia)"; fe.appendChild(s); }
@@ -115,15 +128,21 @@ function desenhar() {
     fe.appendChild(s);
   });
   if (motor.pos >= motor.entrada.length) { const s = document.createElement("span"); s.className = "pos"; s.textContent = "⊣ fim"; fe.appendChild(s); }
-  // pilhas (desenha do fundo ao topo; destaca o topo atual)
-  desenharPilha("pilha1", motor.pilha1, "p1", motor.ultimoMovimento ? motor.ultimoMovimento.pos1 : []);
-  desenharPilha("pilha2", motor.pilha2, "p2", motor.ultimoMovimento ? motor.ultimoMovimento.pos2 : []);
+  // pilhas (topo no alto; ultimo push anima, ultimo pop vira fantasma)
+  const m0 = motor.ultimoMovimento;
+  desenharPilha("pilha1", motor.pilha1, "p1", m0 ? m0.pos1 : [], m0 ? m0.retirou1 : null);
+  desenharPilha("pilha2", motor.pilha2, "p2", m0 ? m0.pos2 : [], m0 ? m0.retirou2 : null);
   const m = motor.ultimoMovimento;
   $("movimento").textContent = m
     ? `Último movimento — P1: ${m.retirou1 ? "pop '" + m.retirou1 + "' + " : ""}push[${m.pos1.join(",") || "–"}] · P2: ${m.retirou2 ? "pop '" + m.retirou2 + "' + " : ""}push[${m.pos2.join(",") || "–"}]`
     : "Nenhum movimento de pilha ainda (push/pop aparecem aqui e destacados).";
   $("regra").textContent = motor.textoRegra(motor.ultimaRegra);
-  renderHistorico("hist", motor.historico);
+  // destaca a linha ativa na tabela
+  const idx = def.transicoes.indexOf(motor.ultimaRegra);
+  document.querySelectorAll("#tabela tbody tr").forEach((tr, i) => {
+    tr.classList.toggle("ativa", i === idx);
+  });
+  renderHistorico("hist", motor.historico, irParaPasso);
   const mapa = { executando: ["Em execução — use o próximo passo ou o modo automático.", "exec"],
     aceita: ["✅ ACEITA — " + motor.motivo, "aceita"],
     rejeita: ["❌ REJEITA — " + motor.motivo, "rejeita"],
@@ -131,14 +150,21 @@ function desenhar() {
   mostrarFaixa("faixa", mapa[motor.status][0], mapa[motor.status][1]);
   $("motivo").textContent = `passos=${motor.passos} · limite=${motor.limite}`;
 }
-function desenharPilha(id, dados, classe, novos) {
+function desenharPilha(id, dados, classe, novos, fantasma) {
   const el = $(id);
   const titulo = el.querySelector("h3").textContent;
   el.innerHTML = "<h3>" + titulo + "</h3>";
-  if (dados.length === 0) { const b = document.createElement("div"); b.className = "base-pilha"; b.textContent = "(vazia) ∅"; el.appendChild(b); }
-  dados.forEach((s, i) => {
+  if (fantasma) {
+    const f = document.createElement("div");
+    f.className = "fantasma";
+    f.textContent = "− '" + fantasma + "' (pop)";
+    f.title = "Símbolo removido no último passo";
+    el.appendChild(f);
+  }
+  if (dados.length === 0 && !fantasma) { const b = document.createElement("div"); b.className = "base-pilha"; b.textContent = "(vazia) ∅"; el.appendChild(b); }
+  [...dados].reverse().forEach((s, i) => {
     const d = document.createElement("div");
-    const ehTopo = i === dados.length - 1;
+    const ehTopo = i === 0;
     d.className = "bloco-pilha " + classe + ((ehTopo && novos && novos.length) ? " novo" : "");
     d.textContent = (ehTopo ? "topo → " : "") + s;
     el.appendChild(d);
@@ -146,8 +172,43 @@ function desenharPilha(id, dados, classe, novos) {
   const base = document.createElement("div"); base.className = "base-pilha"; base.textContent = "▬ base"; el.appendChild(base);
 }
 function botaoAuto() { $("btnAuto").textContent = auto.rodando() ? "Pausar automático" : "Iniciar automático (R6)"; }
+function irParaPasso(n) {
+  auto.parar(); botaoAuto();
+  motor.reiniciar($("entrada").value, parseInt($("limite").value || "500", 10));
+  for (let i = 0; i < n && motor.status === "executando"; i++) motor.passo();
+  desenhar();
+}
+function acaoCurta(r, n) {
+  return `${r["retira" + n] ? "pop;" : ""}push[${(r["insere" + n] || []).join(",") || "–"}]`;
+}
+function montarTabela() {
+  const tb = document.querySelector("#tabela tbody");
+  tb.innerHTML = "";
+  def.transicoes.forEach((t, i) => {
+    const tr = document.createElement("tr");
+    [i, t.de, (t.simbolo ?? "") === "" ? "ε" : t.simbolo, t.topo1 ?? "*",
+     t.topo2 ?? "*", t.para, acaoCurta(t, 1), acaoCurta(t, 2),
+     t.exigeFim ? "sim" : ""].forEach((v) => {
+      const td = document.createElement("td"); td.textContent = v; tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+}
 $("btnPasso").onclick = () => { auto.parar(); botaoAuto(); motor.passo(); desenhar(); };
 $("btnAuto").onclick = () => { if (auto.rodando()) auto.parar(); else auto.iniciar(parseInt($("vel").value, 10)); botaoAuto(); };
+$("btnFim").onclick = () => { auto.parar(); botaoAuto(); motor.executarAteFim(); desenhar(); };
+$("vel").oninput = (e) => {
+  $("velRotulo").textContent = e.target.value + "ms";
+  if (auto.rodando()) { auto.parar(); auto.iniciar(parseInt(e.target.value, 10)); }
+};
+document.addEventListener("keydown", (e) => {
+  const tag = (e.target.tagName || "").toUpperCase();
+  if (["INPUT", "TEXTAREA", "SELECT"].includes(tag) || !motor) return;
+  if (e.code === "Space") { e.preventDefault(); $("btnPasso").click(); }
+  else if (e.key === "a" || e.key === "A") $("btnAuto").click();
+  else if (e.key === "f" || e.key === "F") $("btnFim").click();
+  else if (e.key === "r" || e.key === "R") $("btnReiniciar").click();
+});
 $("btnReiniciar").onclick = instalar;
 $("btnAplicar").onclick = instalar;
 $("btnValidar").onclick = instalar;

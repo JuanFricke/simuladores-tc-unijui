@@ -43,6 +43,18 @@ o botão de exemplo tenta `fetch` do JSON e, se falhar por `file://`, usa um exe
 - **DP aⁿbⁿ:** entrada `aaabbb` → ACEITA (P1 enche e esvazia); `abb` → REJEITA.
 - **DP aⁿbⁿcⁿ:** entrada `aabbcc` → ACEITA (P1 e P2 zeram); `aabcc` → REJEITA.
 
+### Interatividade (novo)
+
+- **Tabela δ completa** com a linha da regra ativa destacada a cada passo.
+- **Time-travel:** clique em qualquer item do histórico para voltar àquela
+  configuração e seguir dali (reexecução determinística).
+- **Atalhos de teclado:** `Espaço` passo · `A` automático · `F` até o fim ·
+  `R` reiniciar (fora de campos de texto).
+- **Velocidade contínua** (slider 60–900 ms, vale com o automático rodando) e
+  botão **Rodar até o fim**.
+- **Animações CSS puras:** seta do cabeçote desliza, célula escrita pisca,
+  push cai na pilha, pop vira bloco fantasma tracejado, faixa de veredito pulsa.
+
 ## 3 · Formato JSON das máquinas
 
 ### 3.1 Máquina de Turing

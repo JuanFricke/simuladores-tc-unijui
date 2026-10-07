@@ -32,13 +32,31 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .faixa.exec{background:#e8f0fe;border:1px solid #9db8e8;color:#1c3d7a}
 .faixa.aceita{background:#dff2e2;border:1px solid var(--verde-ok);color:#14522a}
 .faixa.rejeita{background:#fbe3dd;border:1px solid var(--vermelho);color:#7e2a1c}
+.faixa.aceita{background:#dff2e2;border:1px solid var(--verde-ok);color:#14522a;animation:pulso .9s ease 2}
+.faixa.rejeita{background:#fbe3dd;border:1px solid var(--vermelho);color:#7e2a1c;animation:pulso .9s ease 2}
+@keyframes pulso{50%{transform:scale(1.015)}}
 .faixa.limite{background:var(--mostarda-cl);border:1px solid var(--mostarda);color:#5c430a}
+table.regras{border-collapse:collapse;width:100%;font-size:.82rem;font-family:Consolas,monospace}
+table.regras th,table.regras td{border:1px solid var(--borda);padding:5px 8px;text-align:center}
+table.regras th{background:var(--mata);color:#fff;font-family:var(--fonte)}
+table.regras tr.ativa td{background:var(--mostarda-cl);font-weight:bold}
+.envoltorio-tabela{overflow-x:auto;max-height:260px;overflow-y:auto}
+ol.historico li{cursor:pointer;border-radius:5px;padding:1px 4px}
+ol.historico li:hover{background:var(--mostarda-cl)}
+ol.historico li.atual{background:#e8f0e4;font-weight:bold}
+input[type=range]{accent-color:var(--mata)}
+progress{width:180px;height:12px;accent-color:var(--teal)}
+kbd{border:1px solid var(--borda);border-bottom-width:2px;border-radius:5px;background:#fff;padding:0 6px;font-family:Consolas,monospace;font-size:.8rem}
+.dica{font-size:.83rem;color:var(--suave)}
 /* Fita da MT */
-.trilho-fita{display:flex;gap:6px;overflow-x:auto;padding:14px 6px 4px;background:#2c2a24;border-radius:10px}
+.trilho-fita{position:relative;display:flex;gap:6px;overflow-x:auto;padding:22px 6px 4px;background:#2c2a24;border-radius:10px}
+#seta{position:absolute;top:2px;left:0;transition:left .28s cubic-bezier(.4,0,.2,1);color:var(--mostarda);transform:translateX(-50%);font-size:1rem;line-height:1;pointer-events:none}
 .celula{min-width:52px;text-align:center;background:var(--papel);border-radius:8px;border:2px solid transparent;padding:2px 2px 6px}
 .celula .simbolo{font-family:Consolas,monospace;font-size:1.3rem;font-weight:bold}
 .celula .indice{font-size:.7rem;color:var(--suave)}
 .celula.cabecote{border-color:var(--mostarda);background:var(--mostarda-cl)}
+.celula.gravou{animation:piscar .8s ease}
+@keyframes piscar{0%{background:var(--mostarda);transform:scale(1.12)}100%{}}
 .seta-cabecote{text-align:center;color:var(--mostarda);font-weight:bold}
 .regra-atual{background:#f2f6ef;border-left:6px solid var(--teal);padding:8px 12px;font-family:Consolas,monospace;font-size:.88rem;white-space:pre-wrap}
 /* Pilhas */
@@ -49,7 +67,9 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .bloco-pilha{border-radius:7px;text-align:center;padding:6px;font-family:Consolas,monospace;font-weight:bold;border:1px solid #0003}
 .bloco-pilha.p1{background:#d9ecf5}
 .bloco-pilha.p2{background:#e2f0da}
-.bloco-pilha.novo{outline:3px solid var(--mostarda)}
+.bloco-pilha.novo{outline:3px solid var(--mostarda);animation:cair .32s ease}
+@keyframes cair{from{transform:translateY(-16px);opacity:0}}
+.fantasma{border-radius:7px;text-align:center;padding:6px;font-family:Consolas,monospace;border:2px dashed var(--vermelho);color:var(--vermelho);background:#fff;opacity:.75}
 .base-pilha{text-align:center;font-size:.75rem;color:var(--suave);border-top:3px solid var(--mata);padding-top:6px}
 .fita-entrada{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}
 .fita-entrada span{border:1px solid var(--borda);background:#fff;border-radius:6px;padding:4px 9px;font-family:Consolas,monospace}
