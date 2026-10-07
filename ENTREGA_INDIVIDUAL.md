@@ -5,8 +5,8 @@
 **Aluno(a):** [SEU_NOME_COMPLETO]
 **Grupo:** Juan Fricke · Gabriel Buron · Laura Capssa · Vinicius Dutra
 
-**Repositório:** [COLE_AQUI_A_URL_DO_REPO]
-**Demonstração (GitHub Pages):** [COLE_AQUI_A_URL_DO_PAGES]
+**Repositório:** https://github.com/JuanFricke/simuladores-tc-unijui
+**Demonstração (GitHub Pages):** http://www.juanfricke.dev/simuladores-tc-unijui/
 
 > Para converter em PDF: colar este arquivo no Google Docs / Word e exportar como PDF
 > com o nome `Atividade_Aula08_Simuladores_[SeuNome].pdf`, ou usar

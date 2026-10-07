@@ -2,7 +2,7 @@
 
 **Disciplina:** Teoria da Computação e Complexidade IJ — UNIJUÍ · **Data:** 07/10/2026
 **Integrantes:** Juan Fricke · Gabriel Buron · Laura Capssa · Vinicius Dutra
-**Projeto:** [COLE_AQUI_A_URL_DO_REPO] · **Demonstração online:** [COLE_AQUI_A_URL_DO_PAGES]
+**Projeto:** https://github.com/JuanFricke/simuladores-tc-unijui · **Demonstração online:** http://www.juanfricke.dev/simuladores-tc-unijui/
 
 ## O que entregamos
 

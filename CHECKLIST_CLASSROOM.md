@@ -24,8 +24,7 @@ Anexar/colocar:
 ## 3) Não esquecer (vale para as duas)
 
 - [ ] Todos os 4 nomes no Doc de grupo; nome no PDF individual.
-- [ ] URLs reais no lugar dos `[COLE_AQUI_...]` (ou manter o placeholder visível,
-      nunca link inventado).
+- [x] URLs reais já preenchidas (repo + Pages). Só testar os links antes do prazo.
 - [ ] Testar os links do Pages (`/`, `/mt/`, `/dp/`) antes do prazo.
 - [ ] Rodar `node testes/testes-basicos.js` e citar o resultado (24 ok).
 - [ ] Prazo: 07/10 às 23:59. Enviar com antecedência — Pages leva 1–2 min.

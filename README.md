@@ -12,7 +12,7 @@ com entrada somente-leitura.
 
 **Grupo:** Juan Fricke · Gabriel Buron · Laura Capssa · Vinicius Dutra
 
-**Links:** repo `[COLE_AQUI_A_URL_DO_REPO]` · demonstração `[COLE_AQUI_A_URL_DO_PAGES]`
+**Links:** repo `https://github.com/JuanFricke/simuladores-tc-unijui` · demonstração `http://www.juanfricke.dev/simuladores-tc-unijui/`
 
 ---
 
