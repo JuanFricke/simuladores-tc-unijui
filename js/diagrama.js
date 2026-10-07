@@ -10,13 +10,10 @@ function desenharDiagrama(svgId, def, estadoAtual, rotuloAresta) {
   svg.innerHTML = "";
   const estados = def.estados || [];
   const n = estados.length;
-  const W = 620, H = n > 4 ? 340 : 280;
-  const cx = W / 2, cy = H / 2 + 10;
+  const W = 620;
+  const cx = W / 2, cy = 170;
   const raioOrbita = Math.min(230, 70 + n * 28);
   const R = 30;
-  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-  svg.style.width = "100%";
-  svg.style.height = H + "px";
 
   const pos = {};
   estados.forEach((e, i) => {
@@ -42,6 +39,20 @@ function desenharDiagrama(svgId, def, estadoAtual, rotuloAresta) {
     if (!grupos.has(k)) grupos.set(k, []);
     grupos.get(k).push(t);
   });
+  const temLaco = (e) => (def.transicoes || []).some((t) => t.de === e && t.para === e);
+
+  // viewBox calculado da extensao real (nos + lacos + rotulos).
+  let minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
+  estados.forEach((e) => {
+    const p = pos[e];
+    minX = Math.min(minX, p.x - R - 8); maxX = Math.max(maxX, p.x + R + 8);
+    minY = Math.min(minY, p.y - R - 8); maxY = Math.max(maxY, p.y + R + 8);
+    if (temLaco(e)) minY = Math.min(minY, p.y - R - 95);
+  });
+  svg.setAttribute("viewBox", `${minX - 90} ${minY - 70} ${maxX - minX + 180} ${maxY - minY + 110}`);
+  svg.style.width = "100%";
+  svg.style.height = "auto";
+  svg.style.display = "block";
 
   grupos.forEach((lista, k) => {
     const [de, para] = k.split("→");
@@ -57,7 +68,7 @@ function desenharDiagrama(svgId, def, estadoAtual, rotuloAresta) {
       });
       rotulos.forEach((r, i) => el("text", {
         x: A.x, y: A.y - R - 34 - (rotulos.length - 1 - i) * 12,
-        "text-anchor": "middle", "font-size": 10.5, "font-family": "Consolas,monospace", fill: "#444"
+        "text-anchor": "middle", "font-size": 10.5, "font-family": "Consolas,monospace", fill: "#444", stroke: "#fffdf6", "stroke-width": 3.5, "paint-order": "stroke"
       }, r));
     } else {
       const dx = B.x - A.x, dy = B.y - A.y;
@@ -67,9 +78,11 @@ function desenharDiagrama(svgId, def, estadoAtual, rotuloAresta) {
       el("line", { x1, y1, x2, y2, stroke: "#1e4d3b", "stroke-width": 1.6, "marker-end": "url(#setaD)" });
       const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
       const nx = -dy / d, ny = dx / d; // normal p/ afastar o rotulo
+      const ux = dx / d, uy = dy / d; // tangente p/ espalhar linhas ao longo da aresta
       rotulos.forEach((r, i) => el("text", {
-        x: mx + nx * 16, y: my + ny * 16 - (rotulos.length - 1 - i) * 12,
-        "text-anchor": "middle", "font-size": 10.5, "font-family": "Consolas,monospace", fill: "#444"
+        x: mx + nx * 18 + ux * (i - (rotulos.length - 1) / 2) * 15,
+        y: my + ny * 18 + uy * (i - (rotulos.length - 1) / 2) * 15,
+        "text-anchor": "middle", "font-size": 10.5, "font-family": "Consolas,monospace", fill: "#444", stroke: "#fffdf6", "stroke-width": 3.5, "paint-order": "stroke"
       }, r));
     }
   });

@@ -3,7 +3,7 @@
 **Disciplina:** Teoria da Computação e Complexidade IJ — UNIJUÍ
 **Data:** 07/10/2026
 **Aluno(a):** [SEU_NOME_COMPLETO]
-**Grupo:** Juan Fricke · Gabriel Buron · Laura Capssa · Vinicius Dutra
+**Grupo:** Juan Fricke · Gabriel Buron · Laura Capssa · Vinicius Dutra · Vinícius Mattos
 
 **Repositório:** https://github.com/JuanFricke/simuladores-tc-unijui
 **Demonstração (GitHub Pages):** http://www.juanfricke.dev/simuladores-tc-unijui/
@@ -101,6 +101,7 @@ de configurações e indicação explícita de parada:
 - Gabriel Buron — [ex.: motor das 2 pilhas + exemplos DP].
 - Laura Capssa — [ex.: páginas HTML/CSS + prints do relatório].
 - Vinicius Dutra — [ex.: README, JSONs da MT, revisão final].
+- Vinícius Mattos — [ex.: diagramas, testes, revisão final].
   *(Ajuste as atribuições antes de entregar.)*
 
 ## 7 · Declaração de uso de IA

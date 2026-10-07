@@ -10,7 +10,7 @@ com entrada somente-leitura.
 > Todo o código, CSS, layout, textos e exemplos deste repo foram escritos do zero
 > para esta entrega. Ver “Declaração de uso de IA” ao final.
 
-**Grupo:** Juan Fricke · Gabriel Buron · Laura Capssa · Vinicius Dutra
+**Grupo:** Juan Fricke · Gabriel Buron · Laura Capssa · Vinicius Dutra · Vinícius Mattos
 
 **Links:** repo `https://github.com/JuanFricke/simuladores-tc-unijui` · demonstração `http://www.juanfricke.dev/simuladores-tc-unijui/`
 
@@ -124,7 +124,7 @@ node testes/testes-basicos.js
 ```
 
 Roda os `testes` dos 4 exemplos + um caso de `limite` (máquina que anda para sempre).
-Esperado: `28 ok, 0 falhas` (7 + 8 testes MT + 12 testes DP + 1 caso-limite).
+Esperado: `28 ok, 0 falhas` (13 testes MT + 14 testes DP + 1 caso-limite).
 Sem dependências: só Node 16+.
 
 ## 6 · Estrutura

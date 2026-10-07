@@ -15,7 +15,7 @@ Anexar:
 
 Anexar/colocar:
 
-- [ ] Texto do `TEXTO_GRUPO.md` colado no Google Doc da entrega (com os 4 nomes,
+- [ ] Texto do `TEXTO_GRUPO.md` colado no Google Doc da entrega (com os 5 nomes,
       link do repo + Pages e divisão de tarefas ajustada).
 - [ ] Link do repositório GitHub + link do GitHub Pages no Doc.
 - [ ] Código: ou o link do repo basta (preferível) ou um `.zip` do projeto
@@ -23,7 +23,7 @@ Anexar/colocar:
 
 ## 3) Não esquecer (vale para as duas)
 
-- [ ] Todos os 4 nomes no Doc de grupo; nome no PDF individual.
+- [ ] Todos os 5 nomes no Doc de grupo; nome no PDF individual.
 - [x] URLs reais já preenchidas (repo + Pages). Só testar os links antes do prazo.
 - [ ] Testar os links do Pages (`/`, `/mt/`, `/dp/`) antes do prazo.
 - [ ] Rodar `node testes/testes-basicos.js` e citar o resultado (24 ok).

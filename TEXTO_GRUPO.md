@@ -1,7 +1,7 @@
 # Atividade Aula 8 (grupo) — Simuladores de Modelos de Computação
 
 **Disciplina:** Teoria da Computação e Complexidade IJ — UNIJUÍ · **Data:** 07/10/2026
-**Integrantes:** Juan Fricke · Gabriel Buron · Laura Capssa · Vinicius Dutra
+**Integrantes:** Juan Fricke · Gabriel Buron · Laura Capssa · Vinicius Dutra · Vinícius Mattos
 **Projeto:** https://github.com/JuanFricke/simuladores-tc-unijui · **Demonstração online:** http://www.juanfricke.dev/simuladores-tc-unijui/
 
 ## O que entregamos
@@ -25,6 +25,7 @@ DP aⁿbⁿ (só P1) e DP aⁿbⁿcⁿ (P1 e P2). Teste rápido: `node testes/te
 - Gabriel Buron — [ex.: motor das 2 pilhas + exemplos DP].
 - Laura Capssa — [ex.: páginas HTML/CSS + prints].
 - Vinicius Dutra — [ex.: README, exemplos MT, revisão].
+- Vinícius Mattos — [ex.: diagramas, testes, revisão].
   *(Ajustar antes de entregar.)*
 
 ## Uso de IA (declaração honesta)
