@@ -13,7 +13,7 @@
 </header>
 <main class="miolo">
 
-<section class="cartao">
+<section class="cartao painel-controle">
 <h2>1 · Palavra de entrada e controle (R1, R5, R6, R7)</h2>
 <div class="linha">
 <label class="rotulo" for="entrada">Palavra de entrada:</label>
@@ -23,19 +23,20 @@
 <button id="btnAplicar">Aplicar entrada e reiniciar</button>
 </div>
 <div class="linha" style="margin-top:10px">
-<button id="btnPasso">Executar próximo passo (R5)</button>
-<button id="btnAuto">Iniciar automático (R6)</button>
-<button id="btnFim" class="secundario">Rodar até o fim</button>
-<button id="btnReiniciar" class="secundario">Reiniciar (R7)</button>
+<button id="btnPasso">▶ Próximo passo</button>
+<button id="btnAuto">▶ Automático</button>
+<button id="btnFim" class="secundario">⏩ Até o fim</button>
+<button id="btnReiniciar" class="secundario">↻ Reiniciar</button>
 <label class="rotulo" for="vel">Velocidade:</label>
 <input type="range" id="vel" min="60" max="900" step="10" value="350" style="width:130px" title="Intervalo entre passos (ms)">
 <span id="velRotulo" class="dica">350ms</span>
 </div>
 <p class="dica">Atalhos: <kbd>Espaço</kbd> passo · <kbd>A</kbd> automático · <kbd>F</kbd> até o fim · <kbd>R</kbd> reiniciar · clique num item do histórico para voltar no tempo.</p>
 <div class="linha"><span class="rotulo">Testar rápido:</span><span id="rapidas" class="linha"></span></div>
+<div class="exemplos" id="exemplosExtras"></div>
 </section>
 
-<section class="cartao">
+<section class="cartao painel-status">
 <h2>2 · Configuração atual (R2) e veredito (R9)</h2>
 <div class="crachas">
 <span class="cracha">Estado atual: <b id="cEstado">–</b></span>
@@ -47,7 +48,7 @@
 <p id="motivo" style="font-size:.88rem;color:#555"></p>
 </section>
 
-<section class="cartao">
+<section class="cartao painel-memoria">
 <h2>3 · Entrada (só leitura) + duas pilhas (R3, R11)</h2>
 <p class="rotulo">Fita de entrada (a cabeça só anda para frente; ε não consome):</p>
 <div id="fitaEntrada" class="fita-entrada"></div>
@@ -58,23 +59,23 @@
 <p id="movimento" style="font-size:.87rem"></p>
 </section>
 
-<section class="cartao">
+<section class="cartao painel-diagrama">
 <h2>4 · Diagrama de estados (nó atual em mostarda, anel duplo = aceita)</h2>
 <svg id="diagrama" role="img" aria-label="Diagrama de estados"></svg>
 </section>
 
-<section class="cartao">
+<section class="cartao painel-regra">
 <h2>5 · Transição aplicada agora (R4)</h2>
 <div id="regra" class="regra-atual">Nenhuma transição aplicada ainda.</div>
 </section>
 
-<section class="cartao">
+<section class="cartao painel-historico">
 <h2>6 · Histórico de configurações (R8) — clique para voltar no tempo</h2>
 <ol id="hist" class="historico"></ol>
 <div class="linha"><button id="btnExport" class="secundario">Exportar definição JSON</button></div>
 </section>
 
-<section class="cartao">
+<section class="cartao painel-tabela">
 <h2>7 · Tabela de transições (δ completo — a linha ativa pisca)</h2>
 <div class="envoltorio-tabela"><table class="regras" id="tabela">
 <thead><tr><th>#</th><th>De</th><th>Lê</th><th>Topo1</th><th>Topo2</th><th>→ Para</th><th>Pilha 1</th><th>Pilha 2</th><th>Fim?</th></tr></thead>
@@ -82,7 +83,7 @@
 </table></div>
 </section>
 
-<section class="cartao">
+<section class="cartao painel-json">
 <h2>8 · Definição da máquina (JSON próprio)</h2>
 <div class="linha">
 <button data-ex="anbn">Exemplo A: aⁿbⁿ (usa P1)</button>
@@ -181,7 +182,7 @@ function desenharPilha(id, dados, classe, novos, fantasma) {
   });
   const base = document.createElement("div"); base.className = "base-pilha"; base.textContent = "▬ base"; el.appendChild(base);
 }
-function botaoAuto() { $("btnAuto").textContent = auto.rodando() ? "Pausar automático" : "Iniciar automático (R6)"; }
+function botaoAuto() { $("btnAuto").textContent = auto.rodando() ? "Pausar automático" : "▶ Automático"; }
 function irParaPasso(n) {
   auto.parar(); botaoAuto();
   motor.reiniciar($("entrada").value, parseInt($("limite").value || "500", 10));
@@ -191,12 +192,20 @@ function irParaPasso(n) {
 function montarRapidas() {
   const cx = $("rapidas"); cx.innerHTML = "";
   (def.entradasRapidas || []).forEach((e) => {
-    const b = document.createElement("button");
-    b.className = "secundario";
+    const b = document.createElement("button"); b.className = "secundario exemplo-rapido";
     b.textContent = e === "" ? "ε (vazia)" : e;
     b.title = "Carregar entrada '" + e + "' e reiniciar";
-    b.onclick = () => { $("entrada").value = e; instalar(); };
-    cx.appendChild(b);
+    b.onclick = () => { $("entrada").value = e; instalar(); }; cx.appendChild(b);
+  });
+  const ex = $("exemplosExtras"); if (!ex) return; ex.innerHTML = "";
+  const extras = String(def.nome || "").toLowerCase().includes("anbncn")
+    ? [{v:"abc",ok:true},{v:"aabbcc",ok:true},{v:"aaabbbccc",ok:true},{v:"aabcc",ok:false},{v:"aabbc",ok:false}]
+    : [{v:"ab",ok:true},{v:"aabb",ok:true},{v:"aaabbb",ok:true},{v:"aab",ok:false},{v:"abb",ok:false}];
+  extras.forEach((item) => {
+    const b = document.createElement("button"); b.className = "secundario exemplo-extra " + (item.ok ? "esperado-ok" : "esperado-no");
+    b.innerHTML = `<span>${item.v === "" ? "ε" : item.v}</span><small>${item.ok ? "aceita" : "rejeita"}</small>`;
+    b.title = item.ok ? "Exemplo esperado: ACEITA" : "Exemplo esperado: REJEITA";
+    b.onclick = () => { $("entrada").value = item.v; instalar(); }; ex.appendChild(b);
   });
 }
 function acaoCurta(r, n) {
