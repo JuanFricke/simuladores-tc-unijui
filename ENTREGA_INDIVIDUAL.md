@@ -71,21 +71,20 @@ de configurações e indicação explícita de parada:
 | R10 | Fita + cabeçote (MT) | Célula mostarda + seta ▼ sobre o cabeçote |
 | R11 | Push/pop (DP) | Blocos coloridos, destaque do push, linha “Último movimento” com pops |
 
-## 4 · Demonstrações (capturas — substituir pelos prints reais)
+## 4 · Demonstrações (capturas incluídas no repo, pasta `prints/`)
 
-> Rode cada caso abaixo e capture a tela da faixa de veredito + memória.
-> Mantenha a legenda de cada figura no PDF final.
-
-- **Figura 1 (MT, aceita):** exemplo “paridade de 1s”, entrada `101` → faixa
-  `✅ ACEITA`. `[INSERIR_PRINT_1]`. Descrição: dois `1`s (par); varredura
-  `q_par → q_impar → q_par` e decisão no branco.
-- **Figura 2 (MT, rejeita):** exemplo “aⁿbⁿ”, entrada `aab` → faixa
-  `❌ REJEITA`. `[INSERIR_PRINT_2]`. Descrição: falta um `b`; a máquina procura
-  `b` além do fim e trava em `q1`.
-- **Figura 3 (DP, aceita + rejeita):** exemplo “aⁿbⁿcⁿ”, entrada `aabbcc` →
-  `✅ ACEITA` (P1 e P2 zeram); entrada `aabcc` → `❌ REJEITA`.
-  `[INSERIR_PRINT_3]`. Descrição: cada `a` empilha A (P1), cada `b` move A→B
-  (P1→P2), cada `c` desempilha B (P2).
+- **Figura 1 (MT, aceita):** `prints/fig1-mt-paridade-aceita.png` — exemplo
+  “paridade de 1s”, entrada `101` → faixa `✅ ACEITA` (estado `q_sim`, 4 passos).
+  Dois `1`s (par); varredura `q_par → q_impar → q_par` e decisão no branco.
+- **Figura 2 (MT, rejeita):** `prints/fig2-mt-anbn-rejeita.png` — exemplo
+  “aⁿbⁿ”, entrada `aab` → faixa `❌ REJEITA` (estado `q_nao`, 8 passos, fita
+  `X X Y`). Falta um `b`; a máquina procura `b` além do fim e trava em `q1`.
+- **Figura 3 (DP, aceita):** `prints/fig3-dp-anbncn-aceita.png` — exemplo
+  “aⁿbⁿcⁿ”, entrada `aabbcc` → `✅ ACEITA` (`q_sim`, 7 passos, P1 e P2 zeradas).
+- **Figura 4 (DP, meio da execução / R11):**
+  `prints/fig4-dp-pilhas-meio.png` — mesma máquina, passo 4 (estado `q_b`):
+  P1 já esvaziada pelos pops, P2 com `[B B]` e topo destacado, linha
+  “Último movimento” registrando `pop 'A'` + `push[B]`.
 
 ## 5 · Como testar (passos curtos)
 

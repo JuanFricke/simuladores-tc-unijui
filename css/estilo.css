@@ -44,7 +44,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 /* Pilhas */
 .palco-pilhas{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:700px){.palco-pilhas{grid-template-columns:1fr}}
-.pilha{border:1px solid var(--borda);border-radius:10px;background:#fff;min-height:220px;display:flex;flex-direction:column;justify-content:flex-end;padding:10px;gap:5px}
+.pilha{border:1px solid var(--borda);border-radius:10px;background:#fff;min-height:220px;display:flex;flex-direction:column;justify-content:flex-start;padding:10px;gap:5px}
 .pilha h3{margin:0 0 6px;text-align:center;color:var(--mata-esc);font-size:.95rem}
 .bloco-pilha{border-radius:7px;text-align:center;padding:6px;font-family:Consolas,monospace;font-weight:bold;border:1px solid #0003}
 .bloco-pilha.p1{background:#d9ecf5}
