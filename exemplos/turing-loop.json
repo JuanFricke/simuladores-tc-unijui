@@ -1,0 +1,17 @@
+{
+  "nome": "MT-laco-infinito (demonstra LIMITE)",
+  "descricao": "Anda para a direita para sempre sobre brancos. Com entrada vazia nunca para: use para ver a faixa LIMITE DE PASSOS.",
+  "branco": "_",
+  "estados": ["q"],
+  "inicial": "q",
+  "aceita": [],
+  "rejeita": [],
+  "transicoes": [
+    { "de": "q", "le": "_", "para": "q", "escreve": "_", "move": "D" }
+  ],
+  "entradasRapidas": ["", "a"],
+  "testes": [
+    { "entrada": "", "esperado": "limite" },
+    { "entrada": "a", "esperado": "rejeita" }
+  ]
+}

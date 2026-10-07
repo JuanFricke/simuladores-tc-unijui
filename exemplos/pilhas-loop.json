@@ -1,0 +1,16 @@
+{
+  "nome": "DP-laco-infinito (demonstra LIMITE)",
+  "descricao": "Transicao epsilon que nao consome nada nem mexe nas pilhas: dispara para sempre. Use para ver a faixa LIMITE DE PASSOS.",
+  "estados": ["q"],
+  "inicial": "q",
+  "aceita": [],
+  "rejeita": [],
+  "transicoes": [
+    { "de": "q", "simbolo": "", "topo1": "*", "topo2": "*", "para": "q", "retira1": false, "retira2": false, "insere1": [], "insere2": [] }
+  ],
+  "entradasRapidas": ["", "aab"],
+  "testes": [
+    { "entrada": "", "esperado": "limite" },
+    { "entrada": "aab", "esperado": "limite" }
+  ]
+}

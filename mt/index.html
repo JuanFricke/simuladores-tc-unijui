@@ -32,6 +32,7 @@
 <span id="velRotulo" class="dica">350ms</span>
 </div>
 <p class="dica">Atalhos: <kbd>Espaço</kbd> passo · <kbd>A</kbd> automático · <kbd>F</kbd> até o fim · <kbd>R</kbd> reiniciar · clique num item do histórico para voltar no tempo.</p>
+<div class="linha"><span class="rotulo">Testar rápido:</span><span id="rapidas" class="linha"></span></div>
 </section>
 
 <section class="cartao">
@@ -53,18 +54,23 @@
 </section>
 
 <section class="cartao">
-<h2>4 · Transição aplicada agora (R4)</h2>
+<h2>4 · Diagrama de estados (nó atual em mostarda, anel duplo = aceita)</h2>
+<svg id="diagrama" role="img" aria-label="Diagrama de estados"></svg>
+</section>
+
+<section class="cartao">
+<h2>5 · Transição aplicada agora (R4)</h2>
 <div id="regra" class="regra-atual">Nenhuma transição aplicada ainda.</div>
 </section>
 
 <section class="cartao">
-<h2>5 · Histórico de configurações (R8) — clique para voltar no tempo</h2>
+<h2>6 · Histórico de configurações (R8) — clique para voltar no tempo</h2>
 <ol id="hist" class="historico"></ol>
 <div class="linha"><button id="btnExport" class="secundario">Exportar definição JSON</button></div>
 </section>
 
 <section class="cartao">
-<h2>6 · Tabela de transições (δ completo — a linha ativa pisca)</h2>
+<h2>7 · Tabela de transições (δ completo — a linha ativa pisca)</h2>
 <div class="envoltorio-tabela"><table class="regras" id="tabela">
 <thead><tr><th>#</th><th>Estado</th><th>Lê</th><th>→ Vai para</th><th>Escreve</th><th>Move</th></tr></thead>
 <tbody></tbody>
@@ -72,10 +78,11 @@
 </section>
 
 <section class="cartao">
-<h2>7 · Definição da máquina (JSON próprio)</h2>
+<h2>8 · Definição da máquina (JSON próprio)</h2>
 <div class="linha">
 <button data-ex="paridade">Exemplo A: paridade de '1's</button>
 <button data-ex="anbn" class="secundario">Exemplo B: aⁿbⁿ</button>
+<button data-ex="loop" class="secundario">Exemplo C: laço infinito (LIMITE)</button>
 <button id="btnValidar" class="secundario">Aplicar JSON abaixo</button>
 </div>
 <p style="font-size:.85rem;color:#555">Campos: nome, branco, estados, inicial, aceita, rejeita, transicoes[{de, le, para, escreve, move:E/D/P}]. Ver <code>exemplos/</code> e README.</p>
@@ -86,6 +93,7 @@
 </main>
 <footer class="rodape">Modelo determinístico: no máximo uma transição por (estado, símbolo lido). Sem transição → ACEITA se estado final de aceitação, senão REJEITA.</footer>
 <script src="../js/util.js"></script>
+<script src="../js/diagrama.js"></script>
 <script src="motor.js"></script>
 <script>
 "use strict";
@@ -94,7 +102,8 @@ const auto = criarAutoExecutor(() => { const c = avancar(); if (!c) { auto.parar
 const $ = (id) => document.getElementById(id);
 
 async function carregarExemplo(qual) {
-  const arq = qual === "paridade" ? "../exemplos/turing-paridade.json" : "../exemplos/turing-anbn.json";
+  const arq = qual === "paridade" ? "../exemplos/turing-paridade.json"
+    : qual === "loop" ? "../exemplos/turing-loop.json" : "../exemplos/turing-anbn.json";
   try {
     const r = await fetch(arq); def = await r.json();
   } catch (e) {
@@ -114,7 +123,7 @@ function instalar() {
   def = lerDef() || def; if (!def) return;
   motor = new MotorTuring(def);
   motor.reiniciar($("entrada").value, parseInt($("limite").value || "500", 10));
-  auto.parar(); botaoAuto(); montarTabela(); desenhar();
+  auto.parar(); botaoAuto(); montarTabela(); montarRapidas(); desenhar();
   const av = motor.avisos();
   if (av.length) $("avisoJson").textContent = "Atenção: " + av.join(" | ");
 }
@@ -147,6 +156,7 @@ function desenhar() {
     if (g) g.classList.add("gravou");
   }
   $("regra").textContent = motor.textoRegra(motor.ultimaRegra);
+  desenharDiagrama("diagrama", def, motor.estado, rotuloArestaMT);
   // destaca a linha ativa na tabela
   const idx = def.transicoes.indexOf(motor.ultimaRegra);
   document.querySelectorAll("#tabela tbody tr").forEach((tr, i) => {
@@ -167,8 +177,18 @@ function irParaPasso(n) {
   for (let i = 0; i < n && motor.status === "executando"; i++) motor.passo();
   desenhar();
 }
-function montarTabela() {
-  const tb = document.querySelector("#tabela tbody");
+function montarRapidas() {
+  const cx = $("rapidas"); cx.innerHTML = "";
+  (def.entradasRapidas || []).forEach((e) => {
+    const b = document.createElement("button");
+    b.className = "secundario";
+    b.textContent = e === "" ? "ε (vazia)" : e;
+    b.title = "Carregar entrada '" + e + "' e reiniciar";
+    b.onclick = () => { $("entrada").value = e; instalar(); };
+    cx.appendChild(b);
+  });
+}
+function montarTabela() {  const tb = document.querySelector("#tabela tbody");
   tb.innerHTML = "";
   def.transicoes.forEach((t, i) => {
     const tr = document.createElement("tr");

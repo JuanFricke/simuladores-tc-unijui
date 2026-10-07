@@ -18,7 +18,7 @@ function confere(rotulo, obtido, esperado) {
   else { fail++; console.log(`FALHA ${rotulo} → obtido=${obtido} esperado=${esperado}`); }
 }
 
-for (const arq of ["exemplos/turing-paridade.json", "exemplos/turing-anbn.json"]) {
+for (const arq of ["exemplos/turing-paridade.json", "exemplos/turing-anbn.json", "exemplos/turing-loop.json"]) {
   const def = carregar(arq);
   for (const t of def.testes) {
     const m = new MotorTuring(def);
@@ -27,7 +27,7 @@ for (const arq of ["exemplos/turing-paridade.json", "exemplos/turing-anbn.json"]
     confere(`${def.nome} '${t.entrada}'`, m.status, t.esperado);
   }
 }
-for (const arq of ["exemplos/pilhas-anbn.json", "exemplos/pilhas-anbncn.json"]) {
+for (const arq of ["exemplos/pilhas-anbn.json", "exemplos/pilhas-anbncn.json", "exemplos/pilhas-loop.json"]) {
   const def = carregar(arq);
   for (const t of def.testes) {
     const m = new MotorDuasPilhas(def);
@@ -43,5 +43,4 @@ const loop = { nome: "loop", branco: "_", estados: ["q"], inicial: "q", aceita: 
   const m = new MotorTuring(loop); m.reiniciar("", 50); m.executarAteFim();
   confere("limite de passos", m.status, "limite");
 }
-console.log(`\n${pass} ok, ${fail} falhas.`);
-process.exit(fail ? 1 : 0);
+console.log(`\n${pass} ok, ${fail} falhas.`);process.exit(fail ? 1 : 0);

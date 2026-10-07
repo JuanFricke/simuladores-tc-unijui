@@ -5,6 +5,7 @@
   "inicial": "q_a",
   "aceita": ["q_sim"],
   "rejeita": [],
+  "entradasRapidas": ["aaabbb", "abb", ""],
   "transicoes": [
     { "de": "q_a", "simbolo": "a", "topo1": "*", "topo2": "*", "para": "q_a", "retira1": false, "retira2": false, "insere1": ["A"], "insere2": [] },
     { "de": "q_a", "simbolo": "b", "topo1": "A", "topo2": "*", "para": "q_b", "retira1": true, "retira2": false, "insere1": [], "insere2": [] },

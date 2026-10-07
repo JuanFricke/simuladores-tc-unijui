@@ -54,6 +54,8 @@ o botão de exemplo tenta `fetch` do JSON e, se falhar por `file://`, usa um exe
   botão **Rodar até o fim**.
 - **Animações CSS puras:** seta do cabeçote desliza, célula escrita pisca,
   push cai na pilha, pop vira bloco fantasma tracejado, faixa de veredito pulsa.
+- **Diagrama de estados em SVG** (`js/diagrama.js`, sem bibliotecas): nó atual
+  em mostarda, aceitação em anel duplo, rejeição em borda vermelha.
 
 ## 3 · Formato JSON das máquinas
 
@@ -105,12 +107,15 @@ o botão de exemplo tenta `fetch` do JSON e, se falhar por `file://`, usa um exe
 
 | Arquivo | Linguagem | Ideia |
 |---|---|---|
-| `exemplos/turing-paridade.json` | парidade de `1`s | dois estados varredores + decisão no branco |
+| `exemplos/turing-paridade.json` | paridade de `1`s | dois estados varredores + decisão no branco |
 | `exemplos/turing-anbn.json` | {aⁿbⁿ} | marca X/Y indo e voltando; checa sobra |
+| `exemplos/turing-loop.json` | laço infinito | anda à direita para sempre → demonstra **LIMITE** |
 | `exemplos/pilhas-anbn.json` | {aⁿbⁿ} | P1 como contador de `a` menos `b` |
 | `exemplos/pilhas-anbncn.json` | {aⁿbⁿcⁿ} | P1 conta `a−b`, P2 conta `b−c` |
+| `exemplos/pilhas-loop.json` | laço infinito (ε) | transição vazia eterna → demonstra **LIMITE** |
 
-Cada arquivo traz um campo `testes` com entradas e vereditos esperados.
+Cada arquivo traz `entradasRapidas` (botões de teste em 1 clique) e `testes`
+com entradas e vereditos esperados.
 
 ## 5 · Testes
 
@@ -119,7 +124,7 @@ node testes/testes-basicos.js
 ```
 
 Roda os `testes` dos 4 exemplos + um caso de `limite` (máquina que anda para sempre).
-Esperado: `24 ok, 0 falhas` (5 + 6 + 6 + 6 testes de exemplo + 1 caso-limite).
+Esperado: `28 ok, 0 falhas` (7 + 8 testes MT + 12 testes DP + 1 caso-limite).
 Sem dependências: só Node 16+.
 
 ## 6 · Estrutura

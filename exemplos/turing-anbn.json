@@ -6,6 +6,7 @@
   "inicial": "q0",
   "aceita": ["q_sim"],
   "rejeita": ["q_nao"],
+  "entradasRapidas": ["aabb", "aab", ""],
   "transicoes": [
     { "de": "q0", "le": "X", "para": "q0", "escreve": "X", "move": "D" },
     { "de": "q0", "le": "Y", "para": "q0", "escreve": "Y", "move": "D" },
