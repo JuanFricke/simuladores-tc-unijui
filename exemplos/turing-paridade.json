@@ -1,0 +1,24 @@
+{
+  "nome": "MT-Paridade-Par-de-1s (exemplo proprio 1)",
+  "descricao": "Aceita palavras sobre {0,1} com quantidade PAR de '1'. O estado inicial q_par tambem e varredor; ao ler o branco decide.",
+  "branco": "_",
+  "estados": ["q_par", "q_impar", "q_sim", "q_nao"],
+  "inicial": "q_par",
+  "aceita": ["q_sim"],
+  "rejeita": ["q_nao"],
+  "transicoes": [
+    { "de": "q_par", "le": "0", "para": "q_par", "escreve": "0", "move": "D" },
+    { "de": "q_par", "le": "1", "para": "q_impar", "escreve": "1", "move": "D" },
+    { "de": "q_par", "le": "_", "para": "q_sim", "escreve": "_", "move": "P" },
+    { "de": "q_impar", "le": "0", "para": "q_impar", "escreve": "0", "move": "D" },
+    { "de": "q_impar", "le": "1", "para": "q_par", "escreve": "1", "move": "D" },
+    { "de": "q_impar", "le": "_", "para": "q_nao", "escreve": "_", "move": "P" }
+  ],
+  "testes": [
+    { "entrada": "", "esperado": "aceita" },
+    { "entrada": "001100", "esperado": "aceita" },
+    { "entrada": "101", "esperado": "aceita" },
+    { "entrada": "1", "esperado": "rejeita" },
+    { "entrada": "1011", "esperado": "rejeita" }
+  ]
+}

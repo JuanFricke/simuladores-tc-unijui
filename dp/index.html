@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DP — Máquina de Duas Pilhas · UNIJUÍ</title>
+<link rel="stylesheet" href="../css/estilo.css">
+</head>
+<body>
+<header class="barra-topo">
+<a href="../index.html">← portal</a>
+<h1>Simulador 2 — Máquina de Duas Pilhas (entrada só-leitura)</h1>
+</header>
+<main class="miolo">
+
+<section class="cartao">
+<h2>1 · Palavra de entrada e controle (R1, R5, R6, R7)</h2>
+<div class="linha">
+<label class="rotulo" for="entrada">Palavra de entrada:</label>
+<input type="text" id="entrada" value="aabbcc" size="24" placeholder="ex.: aabb, aabbcc">
+<label class="rotulo" for="limite">Limite:</label>
+<input type="number" id="limite" value="500" min="1" max="10000" style="width:90px">
+<button id="btnAplicar">Aplicar entrada e reiniciar</button>
+</div>
+<div class="linha" style="margin-top:10px">
+<button id="btnPasso">Executar próximo passo (R5)</button>
+<button id="btnAuto">Iniciar automático (R6)</button>
+<button id="btnReiniciar" class="secundario">Reiniciar (R7)</button>
+<label class="rotulo" for="vel">Velocidade:</label>
+<select id="vel"><option value="800">lenta</option><option value="350" selected>média</option><option value="90">rápida</option></select>
+</div>
+</section>
+
+<section class="cartao">
+<h2>2 · Configuração atual (R2) e veredito (R9)</h2>
+<div class="crachas">
+<span class="cracha">Estado atual: <b id="cEstado">–</b></span>
+<span class="cracha">Passo nº: <b id="cPasso">0</b></span>
+<span class="cracha">Pos. leitura: <b id="cPos">0</b></span>
+</div>
+<div id="faixa" class="faixa exec">Carregue uma máquina e uma entrada para começar.</div>
+<p id="motivo" style="font-size:.88rem;color:#555"></p>
+</section>
+
+<section class="cartao">
+<h2>3 · Entrada (só leitura) + duas pilhas (R3, R11)</h2>
+<p class="rotulo">Fita de entrada (a cabeça só anda para frente; ε não consome):</p>
+<div id="fitaEntrada" class="fita-entrada"></div>
+<div class="palco-pilhas">
+<div class="pilha" id="pilha1"><h3>Pilha 1 (base embaixo, topo em cima)</h3></div>
+<div class="pilha" id="pilha2"><h3>Pilha 2 (base embaixo, topo em cima)</h3></div>
+</div>
+<p id="movimento" style="font-size:.87rem"></p>
+</section>
+
+<section class="cartao">
+<h2>4 · Transição aplicada agora (R4)</h2>
+<div id="regra" class="regra-atual">Nenhuma transição aplicada ainda.</div>
+</section>
+
+<section class="cartao">
+<h2>5 · Histórico de configurações (R8)</h2>
+<ol id="hist" class="historico"></ol>
+<div class="linha"><button id="btnExport" class="secundario">Exportar definição JSON</button></div>
+</section>
+
+<section class="cartao">
+<h2>6 · Definição da máquina (JSON próprio)</h2>
+<div class="linha">
+<button data-ex="anbn">Exemplo A: aⁿbⁿ (usa P1)</button>
+<button data-ex="anbncn" class="secundario">Exemplo B: aⁿbⁿcⁿ (usa P1 e P2)</button>
+<button id="btnValidar" class="secundario">Aplicar JSON abaixo</button>
+</div>
+<p style="font-size:.85rem;color:#555">Cada transição: {de, simbolo (""=ε), topo1/topo2 (""=vazia, "*"=qualquer), para, retira1, retira2, insere1[], insere2[], exigeFim?}. Se símbolo ≠ "" consome um caractere.</p>
+<textarea id="definicao" spellcheck="false"></textarea>
+<p id="avisoJson" style="font-size:.85rem;color:#7e2a1c"></p>
+</section>
+
+</main>
+<footer class="rodape">Máquina determinística: no máximo uma regra aplicável por configuração. Epsilon (ε) não avança a leitura. Aceita quando entra em estado de aceitação com entrada esgotada (ou regra com exigeFim).</footer>
+<script src="../js/util.js"></script>
+<script src="motor.js"></script>
+<script>
+"use strict";
+let motor = null, def = null;
+const auto = criarAutoExecutor(() => { motor.passo(); desenhar(); if (motor.status !== "executando") { auto.parar(); botaoAuto(); return false; } return true; });
+const $ = (id) => document.getElementById(id);
+
+async function carregarExemplo(qual) {
+  const arq = qual === "anbn" ? "../exemplos/pilhas-anbn.json" : "../exemplos/pilhas-anbncn.json";
+  try { const r = await fetch(arq); def = await r.json(); }
+  catch (e) { def = DEF_MIN; }
+  $("definicao").value = JSON.stringify(def, null, 2);
+  instalar();
+}
+function instalar() {
+  const v = validarJSON($("definicao").value);
+  if (v.ok) { def = v.valor; $("avisoJson").textContent = ""; }
+  else { $("avisoJson").textContent = "JSON inválido: " + v.erro; if (!def) return; }
+  motor = new MotorDuasPilhas(def);
+  motor.reiniciar($("entrada").value, parseInt($("limite").value || "500", 10));
+  auto.parar(); botaoAuto(); desenhar();
+}
+function desenhar() {
+  $("cEstado").textContent = motor.estado;
+  $("cPasso").textContent = motor.passos;
+  $("cPos").textContent = motor.pos + "/" + motor.entrada.length;
+  // entrada
+  const fe = $("fitaEntrada"); fe.innerHTML = "";
+  if (motor.entrada.length === 0) { const s = document.createElement("span"); s.textContent = "(entrada vazia)"; fe.appendChild(s); }
+  [...motor.entrada].forEach((ch, i) => {
+    const s = document.createElement("span");
+    if (i === motor.pos) s.className = "pos";
+    s.textContent = ch; s.title = i === motor.pos ? "próximo a ler" : "posição " + i;
+    fe.appendChild(s);
+  });
+  if (motor.pos >= motor.entrada.length) { const s = document.createElement("span"); s.className = "pos"; s.textContent = "⊣ fim"; fe.appendChild(s); }
+  // pilhas (desenha do fundo ao topo; destaca o topo atual)
+  desenharPilha("pilha1", motor.pilha1, "p1", motor.ultimoMovimento ? motor.ultimoMovimento.pos1 : []);
+  desenharPilha("pilha2", motor.pilha2, "p2", motor.ultimoMovimento ? motor.ultimoMovimento.pos2 : []);
+  const m = motor.ultimoMovimento;
+  $("movimento").textContent = m
+    ? `Último movimento — P1: ${m.retirou1 ? "pop '" + m.retirou1 + "' + " : ""}push[${m.pos1.join(",") || "–"}] · P2: ${m.retirou2 ? "pop '" + m.retirou2 + "' + " : ""}push[${m.pos2.join(",") || "–"}]`
+    : "Nenhum movimento de pilha ainda (push/pop aparecem aqui e destacados).";
+  $("regra").textContent = motor.textoRegra(motor.ultimaRegra);
+  renderHistorico("hist", motor.historico);
+  const mapa = { executando: ["Em execução — use o próximo passo ou o modo automático.", "exec"],
+    aceita: ["✅ ACEITA — " + motor.motivo, "aceita"],
+    rejeita: ["❌ REJEITA — " + motor.motivo, "rejeita"],
+    limite: ["⏸ LIMITE DE PASSOS — " + motor.motivo, "limite"] };
+  mostrarFaixa("faixa", mapa[motor.status][0], mapa[motor.status][1]);
+  $("motivo").textContent = `passos=${motor.passos} · limite=${motor.limite}`;
+}
+function desenharPilha(id, dados, classe, novos) {
+  const el = $(id);
+  const titulo = el.querySelector("h3").textContent;
+  el.innerHTML = "<h3>" + titulo + "</h3>";
+  if (dados.length === 0) { const b = document.createElement("div"); b.className = "base-pilha"; b.textContent = "(vazia) ∅"; el.appendChild(b); }
+  dados.forEach((s, i) => {
+    const d = document.createElement("div");
+    const ehTopo = i === dados.length - 1;
+    d.className = "bloco-pilha " + classe + ((ehTopo && novos && novos.length) ? " novo" : "");
+    d.textContent = (ehTopo ? "topo → " : "") + s;
+    el.appendChild(d);
+  });
+  const base = document.createElement("div"); base.className = "base-pilha"; base.textContent = "▬ base"; el.appendChild(base);
+}
+function botaoAuto() { $("btnAuto").textContent = auto.rodando() ? "Pausar automático" : "Iniciar automático (R6)"; }
+$("btnPasso").onclick = () => { auto.parar(); botaoAuto(); motor.passo(); desenhar(); };
+$("btnAuto").onclick = () => { if (auto.rodando()) auto.parar(); else auto.iniciar(parseInt($("vel").value, 10)); botaoAuto(); };
+$("btnReiniciar").onclick = instalar;
+$("btnAplicar").onclick = instalar;
+$("btnValidar").onclick = instalar;
+$("btnExport").onclick = () => { if (def) baixarJSON("maquina-duas-pilhas.json", def); };
+document.querySelectorAll("[data-ex]").forEach((b) => b.onclick = () => carregarExemplo(b.dataset.ex));
+const DEF_MIN = { nome: "min", estados: ["q"], inicial: "q", aceita: ["q"], rejeita: [], transicoes: [] };
+carregarExemplo("anbn");
+</script>
+</body>
+</html>

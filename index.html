@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simuladores de Modelos de Computação — UNIJUÍ</title>
+<link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+<header class="barra-topo">
+<h1>Simuladores de Modelos de Computação</h1>
+<span>Teoria da Computação e Complexidade IJ · UNIJUÍ · 07/10/2026</span>
+</header>
+<main class="miolo">
+<section class="cartao">
+<h2>O que é este projeto</h2>
+<p>Trabalho da aula 8: dois simuladores didáticos <strong>originais</strong>, escritos em HTML/CSS/JS puro, sem dependências externas.
+Escolha um modelo abaixo. Cada página mostra entrada, configuração, memória visual, transição aplicada,
+passo a passo, execução automática, reinício, histórico e veredito final.</p>
+<div class="linha">
+<a href="mt/index.html"><button>Simulador 1 — Máquina de Turing (1 fita)</button></a>
+<a href="dp/index.html"><button class="secundario">Simulador 2 — Máquina de Duas Pilhas</button></a>
+</div>
+</section>
+<section class="cartao">
+<h2>Cobertura dos requisitos (R1–R11)</h2>
+<table class="req">
+<tr><th>ID</th><th>Requisito</th><th>Onde aparece</th></tr>
+<tr><td>R1</td><td>Entrada</td><td>Campo “Palavra de entrada” + botão Aplicar entrada</td></tr>
+<tr><td>R2</td><td>Estado / configuração</td><td>Crachás “Estado atual”, “Passo nº”, “Posição”</td></tr>
+<tr><td>R3</td><td>Memória visual</td><td>MT: trilho da fita · DP: duas colunas de pilha + fita de entrada</td></tr>
+<tr><td>R4</td><td>Transição atual</td><td>Quadro “Regra aplicada agora” (notação δ)</td></tr>
+<tr><td>R5</td><td>Próximo passo</td><td>Botão “Executar próximo passo”</td></tr>
+<tr><td>R6</td><td>Automático</td><td>Botões Iniciar/Pausar + controle de velocidade</td></tr>
+<tr><td>R7</td><td>Reiniciar</td><td>Botão “Reiniciar”</td></tr>
+<tr><td>R8</td><td>Histórico</td><td>Lista numerada “Histórico de configurações”</td></tr>
+<tr><td>R9</td><td>Fim claro</td><td>Faixa ACEITA / REJEITA / LIMITE + motivo</td></tr>
+<tr><td>R10</td><td>Fita + cabeçote (MT)</td><td>Célula destacada + seta ▼ sobre o cabeçote</td></tr>
+<tr><td>R11</td><td>Push/pop visíveis (DP)</td><td>Blocos coloridos, destaque do último push e aviso do pop</td></tr>
+</table>
+</section>
+<section class="cartao">
+<h2>Grupo</h2>
+<p>Juan Fricke · Gabriel Buron · Laura Capssa · Vinicius Dutra</p>
+<p>Repositório / demonstração online: <code>[COLE_AQUI_A_URL_DO_REPO]</code> ·
+GitHub Pages: <code>[COLE_AQUI_A_URL_DO_PAGES]</code></p>
+</section>
+</main>
+<footer class="rodape">Feito para fins didáticos · declaração de uso de IA no README · referência funcional (não visual): tsm-simulator (GustavCampos).</footer>
+</body>
+</html>

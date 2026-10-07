@@ -1,0 +1,61 @@
+/* Simuladores TC-UNIJUI — estilo proprio.
+   Paleta "caderno de serra": creme + verde-mata + mostarda.
+   Propositalmente diferente da referencia tsm-simulator. */
+:root{
+  --fundo:#f4f1e6; --papel:#fffdf6; --tinta:#22271f; --suave:#6b6f61;
+  --mata:#1e4d3b; --mata-esc:#123326; --mostarda:#d9a521; --mostarda-cl:#f6e3a1;
+  --teal:#0e9b8b; --vermelho:#b3402c; --verde-ok:#1f7a3d; --borda:#d9d2bd;
+  --raio:12px; --fonte:Verdana,Geneva,"DejaVu Sans",sans-serif;
+  --fonte-titulo:Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fundo);color:var(--tinta);font-family:var(--fonte);line-height:1.5}
+.barra-topo{background:var(--mata);color:#fff;padding:14px 20px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.barra-topo h1{font-family:var(--fonte-titulo);font-size:1.35rem;margin:0}
+.barra-topo a{color:var(--mostarda-cl)}
+.miolo{max-width:1080px;margin:0 auto;padding:20px}
+.cartao{background:var(--papel);border:1px solid var(--borda);border-radius:var(--raio);padding:16px 18px;margin:14px 0;box-shadow:0 1px 0 #0001}
+.cartao h2{font-family:var(--fonte-titulo);margin:0 0 10px;color:var(--mata-esc);font-size:1.15rem;border-bottom:2px solid var(--mostarda);padding-bottom:6px}
+.linha{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+label.rotulo{font-weight:bold;font-size:.9rem}
+input[type=text],input[type=number],textarea,select{font-family:inherit;font-size:.95rem;padding:8px 10px;border:1px solid var(--borda);border-radius:8px;background:#fff;color:var(--tinta)}
+textarea{width:100%;min-height:180px;font-family:Consolas,Menlo,monospace;font-size:.82rem}
+button{font-family:inherit;cursor:pointer;border-radius:9px;border:1px solid var(--mata-esc);padding:9px 14px;font-size:.92rem;background:var(--mata);color:#fff}
+button:hover{background:var(--mata-esc)}
+button.secundario{background:#fff;color:var(--mata-esc)}
+button.perigo{background:var(--vermelho);border-color:#7e2a1c}
+button:disabled{opacity:.5;cursor:not-allowed}
+.crachas{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.cracha{background:#eef3ec;border:1px solid var(--mata);border-radius:999px;padding:4px 12px;font-size:.88rem}
+.cracha b{color:var(--mata-esc)}
+.faixa{border-radius:10px;padding:10px 14px;font-weight:bold;margin:10px 0}
+.faixa.exec{background:#e8f0fe;border:1px solid #9db8e8;color:#1c3d7a}
+.faixa.aceita{background:#dff2e2;border:1px solid var(--verde-ok);color:#14522a}
+.faixa.rejeita{background:#fbe3dd;border:1px solid var(--vermelho);color:#7e2a1c}
+.faixa.limite{background:var(--mostarda-cl);border:1px solid var(--mostarda);color:#5c430a}
+/* Fita da MT */
+.trilho-fita{display:flex;gap:6px;overflow-x:auto;padding:14px 6px 4px;background:#2c2a24;border-radius:10px}
+.celula{min-width:52px;text-align:center;background:var(--papel);border-radius:8px;border:2px solid transparent;padding:2px 2px 6px}
+.celula .simbolo{font-family:Consolas,monospace;font-size:1.3rem;font-weight:bold}
+.celula .indice{font-size:.7rem;color:var(--suave)}
+.celula.cabecote{border-color:var(--mostarda);background:var(--mostarda-cl)}
+.seta-cabecote{text-align:center;color:var(--mostarda);font-weight:bold}
+.regra-atual{background:#f2f6ef;border-left:6px solid var(--teal);padding:8px 12px;font-family:Consolas,monospace;font-size:.88rem;white-space:pre-wrap}
+/* Pilhas */
+.palco-pilhas{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.palco-pilhas{grid-template-columns:1fr}}
+.pilha{border:1px solid var(--borda);border-radius:10px;background:#fff;min-height:220px;display:flex;flex-direction:column;justify-content:flex-end;padding:10px;gap:5px}
+.pilha h3{margin:0 0 6px;text-align:center;color:var(--mata-esc);font-size:.95rem}
+.bloco-pilha{border-radius:7px;text-align:center;padding:6px;font-family:Consolas,monospace;font-weight:bold;border:1px solid #0003}
+.bloco-pilha.p1{background:#d9ecf5}
+.bloco-pilha.p2{background:#e2f0da}
+.bloco-pilha.novo{outline:3px solid var(--mostarda)}
+.base-pilha{text-align:center;font-size:.75rem;color:var(--suave);border-top:3px solid var(--mata);padding-top:6px}
+.fita-entrada{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}
+.fita-entrada span{border:1px solid var(--borda);background:#fff;border-radius:6px;padding:4px 9px;font-family:Consolas,monospace}
+.fita-entrada span.pos{background:var(--mata);color:#fff;font-weight:bold}
+ol.historico{max-height:220px;overflow-y:auto;background:#fff;border:1px solid var(--borda);border-radius:8px;padding:10px 10px 10px 30px;font-family:Consolas,monospace;font-size:.8rem}
+table.req{border-collapse:collapse;width:100%;font-size:.9rem}
+table.req th,table.req td{border:1px solid var(--borda);padding:6px 8px;text-align:left}
+table.req th{background:var(--mata);color:#fff}
+.rodape{color:var(--suave);font-size:.82rem;text-align:center;padding:18px}

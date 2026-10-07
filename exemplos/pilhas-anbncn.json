@@ -1,0 +1,24 @@
+{
+  "nome": "DP-a^n-b^n-c^n (exemplo proprio 2)",
+  "descricao": "Reconhece a^n b^n c^n com as DUAS pilhas: P1 conta 'a' menos 'b'; P2 conta 'b' menos 'c'. n>=1; vazio rejeita.",
+  "estados": ["q_a", "q_b", "q_c", "q_sim"],
+  "inicial": "q_a",
+  "aceita": ["q_sim"],
+  "rejeita": [],
+  "transicoes": [
+    { "de": "q_a", "simbolo": "a", "topo1": "*", "topo2": "*", "para": "q_a", "retira1": false, "retira2": false, "insere1": ["A"], "insere2": [] },
+    { "de": "q_a", "simbolo": "b", "topo1": "A", "topo2": "*", "para": "q_b", "retira1": true, "retira2": false, "insere1": [], "insere2": ["B"] },
+    { "de": "q_b", "simbolo": "b", "topo1": "A", "topo2": "*", "para": "q_b", "retira1": true, "retira2": false, "insere1": [], "insere2": ["B"] },
+    { "de": "q_b", "simbolo": "c", "topo1": "", "topo2": "B", "para": "q_c", "retira1": false, "retira2": true, "insere1": [], "insere2": [] },
+    { "de": "q_c", "simbolo": "c", "topo1": "", "topo2": "B", "para": "q_c", "retira1": false, "retira2": true, "insere1": [], "insere2": [] },
+    { "de": "q_c", "simbolo": "", "topo1": "", "topo2": "", "para": "q_sim", "retira1": false, "retira2": false, "insere1": [], "insere2": [], "exigeFim": true }
+  ],
+  "testes": [
+    { "entrada": "abc", "esperado": "aceita" },
+    { "entrada": "aabbcc", "esperado": "aceita" },
+    { "entrada": "", "esperado": "rejeita" },
+    { "entrada": "aabcc", "esperado": "rejeita" },
+    { "entrada": "abbcc", "esperado": "rejeita" },
+    { "entrada": "aabbc", "esperado": "rejeita" }
+  ]
+}

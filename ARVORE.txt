@@ -1,0 +1,23 @@
+/trabalho7-10 (raiz do projeto — nome do repo sugerido: simuladores-tc-unijui)
+├── index.html                  # portal com links para os 2 simuladores
+├── css/
+│   └── estilo.css              # estilo próprio (creme + verde-serra, diferente da referência)
+├── js/
+│   └── util.js                 # funcoes comuns: historico, auto-executor, JSON
+├── mt/
+│   ├── index.html              # simulador Maquina de Turing
+│   └── motor.js                # motor MT deterministica 1 fita
+├── dp/
+│   ├── index.html              # simulador Maquina de Duas Pilhas
+│   └── motor.js                # motor 2 pilhas + entrada somente leitura
+├── exemplos/
+│   ├── turing-paridade.json    # MT ex.1: qtd par de '1'
+│   ├── turing-anbn.json        # MT ex.2: a^n b^n
+│   ├── pilhas-anbn.json        # 2-pilhas ex.1: a^n b^n
+│   └── pilhas-anbncn.json      # 2-pilhas ex.2: a^n b^n c^n
+├── testes/
+│   └── testes-basicos.js       # testes Node sem dependencia (node testes/testes-basicos.js)
+├── README.md                   # proprio, com deploy, uso, JSON, creditos, IA
+├── ENTREGA_INDIVIDUAL.md       # base do PDF individual (converter p/ PDF)
+├── TEXTO_GRUPO.md              # texto resumido p/ Doc do grupo
+└── CHECKLIST_CLASSROOM.md      # o que anexar onde

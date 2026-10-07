@@ -1,0 +1,34 @@
+{
+  "nome": "MT-a^n-b^n (exemplo proprio 2)",
+  "descricao": "Aceita {a^n b^n | n>=0}. Marca 'a'->X e casa com 'b'->Y, indo e voltando. Texto e transicoes redigidos para esta aula.",
+  "branco": "_",
+  "estados": ["q0", "q1", "q2", "q_sim", "q_nao"],
+  "inicial": "q0",
+  "aceita": ["q_sim"],
+  "rejeita": ["q_nao"],
+  "transicoes": [
+    { "de": "q0", "le": "X", "para": "q0", "escreve": "X", "move": "D" },
+    { "de": "q0", "le": "Y", "para": "q0", "escreve": "Y", "move": "D" },
+    { "de": "q0", "le": "a", "para": "q1", "escreve": "X", "move": "D" },
+    { "de": "q0", "le": "b", "para": "q_nao", "escreve": "b", "move": "P" },
+    { "de": "q0", "le": "_", "para": "q_sim", "escreve": "_", "move": "P" },
+    { "de": "q1", "le": "a", "para": "q1", "escreve": "a", "move": "D" },
+    { "de": "q1", "le": "Y", "para": "q1", "escreve": "Y", "move": "D" },
+    { "de": "q1", "le": "b", "para": "q2", "escreve": "Y", "move": "E" },
+    { "de": "q1", "le": "X", "para": "q_nao", "escreve": "X", "move": "P" },
+    { "de": "q1", "le": "_", "para": "q_nao", "escreve": "_", "move": "P" },
+    { "de": "q2", "le": "a", "para": "q2", "escreve": "a", "move": "E" },
+    { "de": "q2", "le": "Y", "para": "q2", "escreve": "Y", "move": "E" },
+    { "de": "q2", "le": "X", "para": "q0", "escreve": "X", "move": "D" },
+    { "de": "q2", "le": "_", "para": "q_nao", "escreve": "_", "move": "P" },
+    { "de": "q2", "le": "b", "para": "q_nao", "escreve": "b", "move": "P" }
+  ],
+  "testes": [
+    { "entrada": "", "esperado": "aceita" },
+    { "entrada": "ab", "esperado": "aceita" },
+    { "entrada": "aabb", "esperado": "aceita" },
+    { "entrada": "aab", "esperado": "rejeita" },
+    { "entrada": "abb", "esperado": "rejeita" },
+    { "entrada": "ba", "esperado": "rejeita" }
+  ]
+}

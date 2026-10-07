@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MT — Máquina de Turing (1 fita) · UNIJUÍ</title>
+<link rel="stylesheet" href="../css/estilo.css">
+</head>
+<body>
+<header class="barra-topo">
+<a href="../index.html">← portal</a>
+<h1>Simulador 1 — Máquina de Turing determinística</h1>
+</header>
+<main class="miolo">
+
+<section class="cartao">
+<h2>1 · Palavra de entrada e controle (R1, R5, R6, R7)</h2>
+<div class="linha">
+<label class="rotulo" for="entrada">Palavra de entrada:</label>
+<input type="text" id="entrada" value="aabb" size="24" placeholder="ex.: 101, aabb">
+<label class="rotulo" for="limite">Limite:</label>
+<input type="number" id="limite" value="500" min="1" max="10000" style="width:90px">
+<button id="btnAplicar">Aplicar entrada e reiniciar</button>
+</div>
+<div class="linha" style="margin-top:10px">
+<button id="btnPasso">Executar próximo passo (R5)</button>
+<button id="btnAuto">Iniciar automático (R6)</button>
+<button id="btnReiniciar" class="secundario">Reiniciar (R7)</button>
+<label class="rotulo" for="vel">Velocidade:</label>
+<select id="vel"><option value="800">lenta</option><option value="350" selected>média</option><option value="90">rápida</option></select>
+</div>
+</section>
+
+<section class="cartao">
+<h2>2 · Configuração atual (R2) e veredito (R9)</h2>
+<div class="crachas">
+<span class="cracha">Estado atual: <b id="cEstado">–</b></span>
+<span class="cracha">Passo nº: <b id="cPasso">0</b></span>
+<span class="cracha">Cabeçote: <b id="cCabeca">0</b></span>
+</div>
+<div id="faixa" class="faixa exec">Carregue uma máquina e uma entrada para começar.</div>
+<p id="motivo" style="font-size:.88rem;color:#555"></p>
+</section>
+
+<section class="cartao">
+<h2>3 · Fita e cabeçote (R3, R10)</h2>
+<div id="fita" class="trilho-fita" aria-label="Fita da máquina de Turing"></div>
+<p style="font-size:.85rem;color:#555">A célula em mostarda é a posição do cabeçote (▼). A fita cresce para os dois lados conforme necessário; células vazias mostram o símbolo de branco.</p>
+</section>
+
+<section class="cartao">
+<h2>4 · Transição aplicada agora (R4)</h2>
+<div id="regra" class="regra-atual">Nenhuma transição aplicada ainda.</div>
+</section>
+
+<section class="cartao">
+<h2>5 · Histórico de configurações (R8)</h2>
+<ol id="hist" class="historico"></ol>
+<div class="linha"><button id="btnExport" class="secundario">Exportar definição JSON</button></div>
+</section>
+
+<section class="cartao">
+<h2>6 · Definição da máquina (JSON próprio)</h2>
+<div class="linha">
+<button data-ex="paridade">Exemplo A: paridade de '1's</button>
+<button data-ex="anbn" class="secundario">Exemplo B: aⁿbⁿ</button>
+<button id="btnValidar" class="secundario">Aplicar JSON abaixo</button>
+</div>
+<p style="font-size:.85rem;color:#555">Campos: nome, branco, estados, inicial, aceita, rejeita, transicoes[{de, le, para, escreve, move:E/D/P}]. Ver <code>exemplos/</code> e README.</p>
+<textarea id="definicao" spellcheck="false"></textarea>
+<p id="avisoJson" style="font-size:.85rem;color:#7e2a1c"></p>
+</section>
+
+</main>
+<footer class="rodape">Modelo determinístico: no máximo uma transição por (estado, símbolo lido). Sem transição → ACEITA se estado final de aceitação, senão REJEITA.</footer>
+<script src="../js/util.js"></script>
+<script src="motor.js"></script>
+<script>
+"use strict";
+let motor = null, def = null;
+const auto = criarAutoExecutor(() => { const c = avancar(); if (!c) { auto.parar(); botaoAuto(); } return c; });
+const $ = (id) => document.getElementById(id);
+
+async function carregarExemplo(qual) {
+  const arq = qual === "paridade" ? "../exemplos/turing-paridade.json" : "../exemplos/turing-anbn.json";
+  try {
+    const r = await fetch(arq); def = await r.json();
+  } catch (e) {
+    // Fallback embutido caso abra via file://
+    def = qual === "paridade" ? DEF_PAR : DEF_ANBN;
+  }
+  $("definicao").value = JSON.stringify(def, null, 2);
+  instalar();
+}
+function lerDef() {
+  const v = validarJSON($("definicao").value);
+  if (!v.ok) { $("avisoJson").textContent = "JSON inválido: " + v.erro; return null; }
+  $("avisoJson").textContent = "";
+  return v.valor;
+}
+function instalar() {
+  def = lerDef() || def; if (!def) return;
+  motor = new MotorTuring(def);
+  motor.reiniciar($("entrada").value, parseInt($("limite").value || "500", 10));
+  auto.parar(); botaoAuto(); desenhar();
+  const av = motor.avisos();
+  if (av.length) $("avisoJson").textContent = "Atenção: " + av.join(" | ");
+}
+function avancar() {
+  if (!motor) return false;
+  const antes = motor.status;
+  motor.passo();
+  desenhar();
+  return motor.status === "executando";
+}
+function desenhar() {
+  $("cEstado").textContent = motor.estado;
+  $("cPasso").textContent = motor.passos;
+  $("cCabeca").textContent = motor.cabeca;
+  // fita
+  const caixa = $("fita"); caixa.innerHTML = "";
+  motor.janela(7).forEach((c) => {
+    const d = document.createElement("div");
+    d.className = "celula" + (c.atual ? " cabecote" : "");
+    d.innerHTML = (c.atual ? '<div class="seta-cabecote">▼</div>' : "") +
+      '<div class="simbolo"></div><div class="indice">pos ' + c.pos + "</div>";
+    d.querySelector(".simbolo").textContent = c.simbolo;
+    caixa.appendChild(d);
+  });
+  $("regra").textContent = motor.textoRegra(motor.ultimaRegra);
+  renderHistorico("hist", motor.historico);
+  const mapa = { executando: ["Em execução — use o próximo passo ou o modo automático.", "exec"],
+    aceita: ["✅ ACEITA — " + motor.motivo, "aceita"],
+    rejeita: ["❌ REJEITA — " + motor.motivo, "rejeita"],
+    limite: ["⏸ LIMITE DE PASSOS — " + motor.motivo, "limite"] };
+  mostrarFaixa("faixa", mapa[motor.status][0], mapa[motor.status][1]);
+  $("motivo").textContent = `passos=${motor.passos} · limite=${motor.limite}`;
+}
+function botaoAuto() { $("btnAuto").textContent = auto.rodando() ? "Pausar automático" : "Iniciar automático (R6)"; }
+$("btnPasso").onclick = () => { auto.parar(); botaoAuto(); motor.passo(); desenhar(); };
+$("btnAuto").onclick = () => { if (auto.rodando()) auto.parar(); else auto.iniciar(parseInt($("vel").value, 10)); botaoAuto(); };
+$("btnReiniciar").onclick = instalar;
+$("btnAplicar").onclick = instalar;
+$("btnValidar").onclick = instalar;
+$("btnExport").onclick = () => { if (def) baixarJSON("maquina-turing.json", def); };
+document.querySelectorAll("[data-ex]").forEach((b) => b.onclick = () => carregarExemplo(b.dataset.ex));
+// Fallbacks mínimos para file:// (mesmos exemplos do JSON, resumidos)
+const DEF_PAR = { nome: "paridade", branco: "_", estados: ["q_par", "q_impar", "q_sim", "q_nao"], inicial: "q_par", aceita: ["q_sim"], rejeita: ["q_nao"], transicoes: [
+  { de: "q_par", le: "0", para: "q_par", escreve: "0", move: "D" }, { de: "q_par", le: "1", para: "q_impar", escreve: "1", move: "D" },
+  { de: "q_par", le: "_", para: "q_sim", escreve: "_", move: "P" }, { de: "q_impar", le: "0", para: "q_impar", escreve: "0", move: "D" },
+  { de: "q_impar", le: "1", para: "q_par", escreve: "1", move: "D" }, { de: "q_impar", le: "_", para: "q_nao", escreve: "_", move: "P" }] };
+const DEF_ANBN = { nome: "anbn-fallback", branco: "_", estados: ["q0", "q1", "q2", "q_sim", "q_nao"], inicial: "q0", aceita: ["q_sim"], rejeita: ["q_nao"], transicoes: [
+  { de: "q0", le: "X", para: "q0", escreve: "X", move: "D" }, { de: "q0", le: "Y", para: "q0", escreve: "Y", move: "D" },
+  { de: "q0", le: "a", para: "q1", escreve: "X", move: "D" }, { de: "q0", le: "b", para: "q_nao", escreve: "b", move: "P" },
+  { de: "q0", le: "_", para: "q_sim", escreve: "_", move: "P" }, { de: "q1", le: "a", para: "q1", escreve: "a", move: "D" },
+  { de: "q1", le: "Y", para: "q1", escreve: "Y", move: "D" }, { de: "q1", le: "b", para: "q2", escreve: "Y", move: "E" },
+  { de: "q1", le: "X", para: "q_nao", escreve: "X", move: "P" }, { de: "q1", le: "_", para: "q_nao", escreve: "_", move: "P" },
+  { de: "q2", le: "a", para: "q2", escreve: "a", move: "E" }, { de: "q2", le: "Y", para: "q2", escreve: "Y", move: "E" },
+  { de: "q2", le: "X", para: "q0", escreve: "X", move: "D" }, { de: "q2", le: "_", para: "q_nao", escreve: "_", move: "P" },
+  { de: "q2", le: "b", para: "q_nao", escreve: "b", move: "P" }] };
+carregarExemplo("paridade");
+</script>
+</body>
+</html>
