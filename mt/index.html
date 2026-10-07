@@ -38,20 +38,22 @@
 
 <section class="cartao painel-status">
 <h2>2 · Configuração atual (R2) e veredito (R9)</h2>
+<div class="status-linha">
 <div class="crachas">
-<span class="cracha">Estado atual: <b id="cEstado">–</b></span>
-<span class="cracha">Passo nº: <b id="cPasso">0</b></span>
-<span class="cracha">Cabeçote: <b id="cCabeca">0</b></span>
-<span class="cracha"><progress id="prog" value="0" max="500"></progress></span>
+<span class="cracha">ESTADO: <b id="cEstado">–</b></span>
+<span class="cracha">PASSO: <b id="cPasso">0</b></span>
+<span class="cracha">POSIÇÃO: <b id="cCabeca">0</b></span>
+<span class="cracha progresso"><progress id="prog" value="0" max="500"></progress></span>
 </div>
 <div id="faixa" class="faixa exec">Carregue uma máquina e uma entrada para começar.</div>
-<p id="motivo" style="font-size:.88rem;color:#555"></p>
+</div>
+<p id="motivo" class="motivo-linha"></p>
 </section>
 
 <section class="cartao painel-memoria">
 <h2>3 · Fita e cabeçote (R3, R10)</h2>
 <div id="fita" class="trilho-fita" aria-label="Fita da máquina de Turing"></div>
-<p style="font-size:.85rem;color:#555">A célula em mostarda é a posição do cabeçote (▼). A fita cresce para os dois lados conforme necessário; células vazias mostram o símbolo de branco.</p>
+<p class="legenda-memoria">▲ cabeçote sobre a célula em mostarda (▼) · a fita cresce para os dois lados · vazio = símbolo de branco</p>
 </section>
 
 <section class="cartao painel-diagrama">
@@ -60,8 +62,10 @@
 </section>
 
 <section class="cartao painel-regra">
-<h2>5 · Transição aplicada agora (R4)</h2>
-<div id="regra" class="regra-atual">Nenhuma transição aplicada ainda.</div>
+<h2>5 · Regra δ aplicada (R4)</h2>
+<div id="regra" class="regra-destaque">—</div>
+<div id="regraDetalhe" class="regra-detalhe">Nenhuma transição aplicada ainda.</div>
+<p class="aviso-passo">O que mudou neste passo: símbolo lido → escrito, movimento e próximo estado.</p>
 </section>
 
 <section class="cartao painel-historico">
@@ -156,7 +160,10 @@ function desenhar() {
     const g = [...caixa.children].find((c) => c.dataset.pos == motor.ultimaEscrita);
     if (g) g.classList.add("gravou");
   }
-  $("regra").textContent = motor.textoRegra(motor.ultimaRegra);
+  $("regra").textContent = formatoCurtoMT(motor.ultimaRegra);
+  $("regraDetalhe").textContent = motor.textoRegra(motor.ultimaRegra) + (
+    motor.ultimaRegra ? ` · leu '${motor.ultimaRegra.le}', escreveu '${motor.ultimaRegra.escreve}', moveu ${motor.ultimaRegra.move} → foi para ${motor.ultimaRegra.para}` : ""
+  );
   desenharDiagrama("diagrama", def, motor.estado, rotuloArestaMT);
   // destaca a linha ativa na tabela
   const idx = def.transicoes.indexOf(motor.ultimaRegra);
@@ -172,6 +179,10 @@ function desenhar() {
   $("motivo").textContent = `passos=${motor.passos} · limite=${motor.limite}`;
 }
 function botaoAuto() { $("btnAuto").textContent = auto.rodando() ? "Pausar automático" : "▶ Automático"; }
+function formatoCurtoMT(r) {
+  if (!r) return "—";
+  return `${r.de} --${r.le}/${r.escreve}/${r.move}--> ${r.para}`;
+}
 function irParaPasso(n) {
   auto.parar(); botaoAuto();
   motor.reiniciar($("entrada").value, parseInt($("limite").value || "500", 10));
