@@ -1,0 +1,477 @@
+{
+  "nome": "DP-collatz-decimal (exemplo proprio 3)",
+  "descricao": "Verificador da conjectura de Collatz em DECIMAL usando as DUAS pilhas. Leitura: acumula o valor decimal em unario na P1 (cada digito faz v = v*10 + d; P2 como auxiliar). Depois, em epsilon: se n==1 ACEITA; se par n -> n/2 (P2 conta em B's, P1 recebe metade); se impar n -> 3n+1 (cada B vira 3 A's, +1 no fim). ACEITA = atingiu 1. REJEITA = entrada vazia, zero, nao-decimal. Numero grande pode dar LIMITE (aumente o limite).",
+  "estados": [
+    "q0",
+    "q_mul",
+    "q_back",
+    "q_loop",
+    "q_loop1",
+    "q_par_even",
+    "q_par_odd",
+    "q_half",
+    "q_half1",
+    "q_triple",
+    "q_triple1",
+    "q_sim"
+  ],
+  "inicial": "q0",
+  "aceita": [
+    "q_sim"
+  ],
+  "rejeita": [],
+  "entradasRapidas": [
+    "1",
+    "6",
+    "7",
+    "12",
+    "0"
+  ],
+  "transicoes": [
+    {
+      "de": "q0",
+      "simbolo": "0",
+      "topo1": "*",
+      "topo2": "",
+      "para": "q_mul",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [],
+      "insere2": []
+    },
+    {
+      "de": "q0",
+      "simbolo": "1",
+      "topo1": "*",
+      "topo2": "",
+      "para": "q_mul",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [],
+      "insere2": [
+        "A"
+      ]
+    },
+    {
+      "de": "q0",
+      "simbolo": "2",
+      "topo1": "*",
+      "topo2": "",
+      "para": "q_mul",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [],
+      "insere2": [
+        "A",
+        "A"
+      ]
+    },
+    {
+      "de": "q0",
+      "simbolo": "3",
+      "topo1": "*",
+      "topo2": "",
+      "para": "q_mul",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [],
+      "insere2": [
+        "A",
+        "A",
+        "A"
+      ]
+    },
+    {
+      "de": "q0",
+      "simbolo": "4",
+      "topo1": "*",
+      "topo2": "",
+      "para": "q_mul",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [],
+      "insere2": [
+        "A",
+        "A",
+        "A",
+        "A"
+      ]
+    },
+    {
+      "de": "q0",
+      "simbolo": "5",
+      "topo1": "*",
+      "topo2": "",
+      "para": "q_mul",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [],
+      "insere2": [
+        "A",
+        "A",
+        "A",
+        "A",
+        "A"
+      ]
+    },
+    {
+      "de": "q0",
+      "simbolo": "6",
+      "topo1": "*",
+      "topo2": "",
+      "para": "q_mul",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [],
+      "insere2": [
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A"
+      ]
+    },
+    {
+      "de": "q0",
+      "simbolo": "7",
+      "topo1": "*",
+      "topo2": "",
+      "para": "q_mul",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [],
+      "insere2": [
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A"
+      ]
+    },
+    {
+      "de": "q0",
+      "simbolo": "8",
+      "topo1": "*",
+      "topo2": "",
+      "para": "q_mul",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [],
+      "insere2": [
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A"
+      ]
+    },
+    {
+      "de": "q0",
+      "simbolo": "9",
+      "topo1": "*",
+      "topo2": "",
+      "para": "q_mul",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [],
+      "insere2": [
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A"
+      ]
+    },
+    {
+      "de": "q0",
+      "simbolo": "",
+      "topo1": "A",
+      "topo2": "",
+      "para": "q_loop",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [],
+      "insere2": [],
+      "exigeFim": true
+    },
+    {
+      "de": "q_mul",
+      "simbolo": "",
+      "topo1": "A",
+      "topo2": "*",
+      "para": "q_mul",
+      "retira1": true,
+      "retira2": false,
+      "insere1": [],
+      "insere2": [
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A"
+      ]
+    },
+    {
+      "de": "q_mul",
+      "simbolo": "",
+      "topo1": "",
+      "topo2": "*",
+      "para": "q_back",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [],
+      "insere2": []
+    },
+    {
+      "de": "q_back",
+      "simbolo": "",
+      "topo1": "*",
+      "topo2": "A",
+      "para": "q_back",
+      "retira1": false,
+      "retira2": true,
+      "insere1": [
+        "A"
+      ],
+      "insere2": []
+    },
+    {
+      "de": "q_back",
+      "simbolo": "",
+      "topo1": "*",
+      "topo2": "",
+      "para": "q0",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [],
+      "insere2": []
+    },
+    {
+      "de": "q_loop",
+      "simbolo": "",
+      "topo1": "A",
+      "topo2": "",
+      "para": "q_loop1",
+      "retira1": true,
+      "retira2": false,
+      "insere1": [],
+      "insere2": [],
+      "exigeFim": true
+    },
+    {
+      "de": "q_loop1",
+      "simbolo": "",
+      "topo1": "",
+      "topo2": "",
+      "para": "q_sim",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [],
+      "insere2": [],
+      "exigeFim": true
+    },
+    {
+      "de": "q_loop1",
+      "simbolo": "",
+      "topo1": "A",
+      "topo2": "",
+      "para": "q_par_even",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [
+        "A"
+      ],
+      "insere2": [],
+      "exigeFim": true
+    },
+    {
+      "de": "q_par_even",
+      "simbolo": "",
+      "topo1": "A",
+      "topo2": "*",
+      "para": "q_par_odd",
+      "retira1": true,
+      "retira2": false,
+      "insere1": [],
+      "insere2": [
+        "B"
+      ],
+      "exigeFim": true
+    },
+    {
+      "de": "q_par_even",
+      "simbolo": "",
+      "topo1": "",
+      "topo2": "*",
+      "para": "q_half",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [],
+      "insere2": [],
+      "exigeFim": true
+    },
+    {
+      "de": "q_par_odd",
+      "simbolo": "",
+      "topo1": "A",
+      "topo2": "*",
+      "para": "q_par_even",
+      "retira1": true,
+      "retira2": false,
+      "insere1": [],
+      "insere2": [
+        "B"
+      ],
+      "exigeFim": true
+    },
+    {
+      "de": "q_par_odd",
+      "simbolo": "",
+      "topo1": "",
+      "topo2": "*",
+      "para": "q_triple",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [],
+      "insere2": [],
+      "exigeFim": true
+    },
+    {
+      "de": "q_half",
+      "simbolo": "",
+      "topo1": "*",
+      "topo2": "",
+      "para": "q_loop",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [],
+      "insere2": [],
+      "exigeFim": true
+    },
+    {
+      "de": "q_half",
+      "simbolo": "",
+      "topo1": "*",
+      "topo2": "B",
+      "para": "q_half1",
+      "retira1": false,
+      "retira2": true,
+      "insere1": [],
+      "insere2": [],
+      "exigeFim": true
+    },
+    {
+      "de": "q_half1",
+      "simbolo": "",
+      "topo1": "*",
+      "topo2": "B",
+      "para": "q_half",
+      "retira1": false,
+      "retira2": true,
+      "insere1": [
+        "A"
+      ],
+      "insere2": [],
+      "exigeFim": true
+    },
+    {
+      "de": "q_triple",
+      "simbolo": "",
+      "topo1": "*",
+      "topo2": "B",
+      "para": "q_triple",
+      "retira1": false,
+      "retira2": true,
+      "insere1": [
+        "A",
+        "A",
+        "A"
+      ],
+      "insere2": [],
+      "exigeFim": true
+    },
+    {
+      "de": "q_triple",
+      "simbolo": "",
+      "topo1": "*",
+      "topo2": "",
+      "para": "q_triple1",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [],
+      "insere2": [],
+      "exigeFim": true
+    },
+    {
+      "de": "q_triple1",
+      "simbolo": "",
+      "topo1": "*",
+      "topo2": "",
+      "para": "q_loop",
+      "retira1": false,
+      "retira2": false,
+      "insere1": [
+        "A"
+      ],
+      "insere2": [],
+      "exigeFim": true
+    }
+  ],
+  "testes": [
+    {
+      "entrada": "1",
+      "esperado": "aceita"
+    },
+    {
+      "entrada": "2",
+      "esperado": "aceita"
+    },
+    {
+      "entrada": "3",
+      "esperado": "aceita"
+    },
+    {
+      "entrada": "6",
+      "esperado": "aceita"
+    },
+    {
+      "entrada": "7",
+      "esperado": "aceita"
+    },
+    {
+      "entrada": "12",
+      "esperado": "aceita"
+    },
+    {
+      "entrada": "0",
+      "esperado": "rejeita"
+    },
+    {
+      "entrada": "",
+      "esperado": "rejeita"
+    },
+    {
+      "entrada": "abc",
+      "esperado": "rejeita"
+    },
+    {
+      "entrada": "-5",
+      "esperado": "rejeita"
+    }
+  ]
+}
